@@ -410,19 +410,41 @@ function renderFavorites() {
   favorites.forEach(meal => {
 
     container.innerHTML += `
-      <div class="mini-card">
+  <div class="mini-card">
 
-        <img
-          src="${meal.image}"
-          alt="${meal.name}"
-        >
+    <img
+      src="${meal.image}"
+      alt="${meal.name}"
+    >
 
-        <p>${meal.name}</p>
+    <p>${meal.name}</p>
 
-      </div>
+    <button
+      onclick="removeFavorite('${meal.id}')"
+    >
+      ลบ
+    </button>
+
+  </div>
     `;
 
   });
+
+}
+function removeFavorite(id) {
+
+  const index =
+    favorites.findIndex(
+      meal => meal.id === id
+    );
+
+  if (index !== -1) {
+
+    favorites.splice(index, 1);
+
+  }
+
+  renderFavorites();
 
 }
 
@@ -462,6 +484,12 @@ function renderQueue() {
 
         <p>${meal.name}</p>
 
+        <button
+          onclick="removeQueue('${meal.id}')"
+        >
+          ลบ
+        </button>
+
       </div>
     `;
 
@@ -469,6 +497,25 @@ function renderQueue() {
 
 }
 
+function removeQueue(id) {
+
+  const index =
+    mealQueue.items.findIndex(
+      meal => meal.id === id
+    );
+
+  if (index !== -1) {
+
+    mealQueue.items.splice(
+      index,
+      1
+    );
+
+  }
+
+  renderQueue();
+
+}
 
 // ==========================
 // Generate Weekly Plan
@@ -487,29 +534,41 @@ function generateWeeklyPlan() {
     "Sunday"
   ];
 
-  let dayIndex = 0;
-
-  days.forEach(day => {
-    weeklyPlan[day] = [];
-  });
-
-  while (
-    !mealQueue.isEmpty()
-  ) {
+  while (!mealQueue.isEmpty()) {
 
     const meal =
       mealQueue.dequeue();
 
-    weeklyPlan[
-      days[dayIndex]
-    ].push(meal);
+    const emptyDay =
+      days.find(
+        day =>
+          weeklyPlan[day].length === 0
+      );
 
-    dayIndex =
-      (dayIndex + 1) % 7;
+    if (!emptyDay) {
+      break;
+    }
+
+    weeklyPlan[emptyDay]
+      .push(meal);
 
   }
 
   renderQueue();
+
+  renderWeeklyPlan();
+
+}
+
+function clearPlanner() {
+
+  Object.keys(
+    weeklyPlan
+  ).forEach(day => {
+
+    weeklyPlan[day] = [];
+
+  });
 
   renderWeeklyPlan();
 
