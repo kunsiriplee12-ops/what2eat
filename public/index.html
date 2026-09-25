@@ -6,6 +6,12 @@
   <title>WHAT2EAT</title>
 
   <link rel="stylesheet" href="style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 </head>
 <body>
 <div id="categoryPage">
@@ -41,12 +47,7 @@
        Bubble Sort
   =========================== -->
 
-  <section>
 
-    <h2>Categories</h2>
-    <div id="categoryContainer"
-       class="category-grid">
-    </div>
 
   </section>
 
@@ -67,28 +68,6 @@
   <div
   id="dashboardPage"
   class="hidden">
-
-  <!-- ==========================
-       MEALS
-  =========================== -->
-
-  <section>
-
-    <button onclick="backToCategories()">
-    กลับไปเลือกหมวด
-    </button>
-
-    <h2 id="currentCategory">
-    หมวดอาหาร
-    </h2>
-
-    <h2>Meals</h2>
-
-    <div id="mealContainer"
-         class="meal-grid">
-    </div>
-
-  </section>
 
   <!-- ==========================
        FAVORITES
@@ -168,6 +147,27 @@
         <div id="Sunday"></div>
       </div>
 
+    </div>
+
+  </section>
+
+  <!-- ==========================
+       MEALS
+  =========================== -->
+<section>
+
+    <button onclick="backToCategories()">
+    กลับไปเลือกหมวด
+    </button>
+
+    <h2 id="currentCategory">
+    หมวดอาหาร
+    </h2>
+
+    <h2>Meals</h2>
+
+    <div id="mealContainer"
+         class="meal-grid">
     </div>
 
   </section>

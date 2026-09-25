@@ -262,7 +262,7 @@ async function loadMeals(category) {
   const data =
     await res.json();
 
-  renderMeals(data.meals);
+  renderMeals(data.meals.slice(0,12));
 
   document
     .getElementById("mealContainer")
@@ -309,29 +309,31 @@ function renderMeals(meals) {
               )
             "
           >
-            View Detail
+            ดูรายละเอียด
           </button>
 
           <button
             onclick="
               addFavorite(
                 '${meal.idMeal}',
-                '${meal.strMeal}'
+                '${meal.strMeal}',
+                '${meal.strMealThumb}'
               )
             "
           >
-            ❤️ Favorite
+            เพิ่มรายการโปรด
           </button>
 
           <button
             onclick="
               addQueue(
                 '${meal.idMeal}',
-                '${meal.strMeal}'
+                '${meal.strMeal}',
+                '${meal.strMealThumb}'
               )
             "
           >
-            ➕ Queue
+            เพิ่มลงแผนอาหาร
           </button>
 
         </div>
@@ -347,37 +349,37 @@ function renderMeals(meals) {
 // Search
 // ==========================
 
-async function searchMeal() {
+///async function searchMeal() {
 
-  const keyword =
-    document
-      .getElementById(
-        "searchInput"
-      )
-      .value;
+  //const keyword =
+    //document
+      //.getElementById(
+      //  "searchInput"
+      //)
+      //.value;
 
-  if (!keyword) return;
+  //if (!keyword) return;
 
-  const res =
-    await fetch(
-      `/api/search/${keyword}`
-    );
+  //const res =
+    //await fetch(
+   //   `/api/search/${keyword}`
+   // );
 
-  const data =
-    await res.json();
+  //const data =
+    //await res.json();
 
-  if (data.meals) {
-    renderMeals(data.meals);
-  }
+  //if (data.meals) {
+    //renderMeals(data.meals);
+  //}
 
-}
+//}
 
 // ==========================
 // Favorite
 // Array
 // ==========================
 
-function addFavorite(id, name) {
+function addFavorite(id, name, image) {
 
   const exists =
     favorites.find(
@@ -388,7 +390,8 @@ function addFavorite(id, name) {
 
   favorites.push({
     id,
-    name
+    name,
+    image
   });
 
   renderFavorites();
@@ -407,7 +410,16 @@ function renderFavorites() {
   favorites.forEach(meal => {
 
     container.innerHTML += `
-      <p>❤️ ${meal.name}</p>
+      <div class="mini-card">
+
+        <img
+          src="${meal.image}"
+          alt="${meal.name}"
+        >
+
+        <p>${meal.name}</p>
+
+      </div>
     `;
 
   });
@@ -418,15 +430,15 @@ function renderFavorites() {
 // Queue
 // ==========================
 
-function addQueue(id, name) {
+function addQueue(id, name, image) {
 
   mealQueue.enqueue({
     id,
-    name
+    name,
+    image
   });
 
   renderQueue();
-
 }
 
 function renderQueue() {
@@ -438,20 +450,25 @@ function renderQueue() {
 
   container.innerHTML = "";
 
-  mealQueue.items.forEach(
-    (meal,index) => {
+  mealQueue.items.forEach(meal => {
 
-      container.innerHTML += `
-        <p>
-          ${index+1}.
-          ${meal.name}
-        </p>
-      `;
+    container.innerHTML += `
+      <div class="mini-card">
 
-    }
-  );
+        <img
+          src="${meal.image}"
+          alt="${meal.name}"
+        >
+
+        <p>${meal.name}</p>
+
+      </div>
+    `;
+
+  });
 
 }
+
 
 // ==========================
 // Generate Weekly Plan
@@ -519,9 +536,18 @@ function renderWeeklyPlan() {
       .forEach(meal => {
 
         container.innerHTML += `
-          <p>
-            🍽️ ${meal.name}
-          </p>
+          <div class="mini-card">
+
+            <img
+              src="${meal.image}"
+              alt="${meal.name}"
+            >
+
+            <p>
+              ${meal.name}
+            </p>
+
+          </div>
         `;
 
       });
@@ -529,6 +555,7 @@ function renderWeeklyPlan() {
   });
 
 }
+
 
 // ==========================
 // Detail Modal
