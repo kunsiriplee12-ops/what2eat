@@ -14,166 +14,71 @@
 
 </head>
 <body>
-<div id="categoryPage">
-  <!-- ==========================
-       HEADER
-  =========================== -->
-
   <header>
     <h1>WHAT2EAT</h1>
     <p>Weekly Meal Planner & Favorites</p>
   </header>
 
-  <!-- ==========================
-       SEARCH
-  =========================== -->
-<!--======================
-  <section class="search-section">
-
-    <input
-      type="text"
-      id="searchInput"
-      placeholder="Search meal..."
-    >
-
-    <button onclick="searchMeal()">
-      Search
-    </button>
-
+  <section class="category-section" aria-labelledby="categoryHeading">
+    <h2 id="categoryHeading">Categories</h2>
+    <div id="categoryContainer" class="category-grid"></div>
   </section>
 
-  <!==========================
-       SORT
-       Bubble Sort
-  =========================== -->
+  <main class="dashboard-layout">
+    <section class="dashboard-section" aria-labelledby="favoritesHeading">
+      <h2 id="favoritesHeading">Favorites</h2>
+      <div id="favoriteContainer"></div>
+    </section>
 
-
-
-  </section>
-
-  <!-- ==========================
-       CATEGORY
-  =========================== -->
-
-  <section>
-
-    <div id="categoryContainer"
-         class="category-grid">
-    </div>
-
-  </section>
-
-  </div>
-
-  <div
-  id="dashboardPage"
-  class="hidden">
-
-  <!-- ==========================
-       FAVORITES
-       Array
-  =========================== -->
-
-  <section>
-
-    <h2>Favorites</h2>
-
-    <div id="favoriteContainer">
-    </div>
-
-  </section>
-
-  <!-- ==========================
-       QUEUE
-       Queue FIFO
-  =========================== -->
-
-  <section>
-
-    <h2>Weekly Meal</h2>
-
-    <div id="queueContainer">
-    </div>
-
-    <button onclick="generateWeeklyPlan()">
-      เพิ่มเข้าตาราง
-    </button>
-    <button onclick="clearPlanner()">
-      ล้างตารางอาหาร
-    </button>
-
-  </section>
-
-  <!-- ==========================
-       WEEKLY PLAN
-       Hash Map
-  =========================== -->
-
-  <section>
-
-    <h2>Weekly Meal Planner</h2>
-
-    <div class="week-grid">
-
-      <div class="day-card">
-        <h3>Monday</h3>
-        <div id="Monday"></div>
+    <section class="dashboard-section" aria-labelledby="queueHeading">
+      <h2 id="queueHeading">Weekly Meals</h2>
+      <div id="queueContainer"></div>
+      <div class="queue-actions">
+        <button type="button" onclick="generateWeeklyPlan()">เพิ่มเข้าตาราง</button>
+        <button type="button" onclick="clearPlanner()">ล้างตารางอาหาร</button>
       </div>
+    </section>
 
-      <div class="day-card">
-        <h3>Tuesday</h3>
-        <div id="Tuesday"></div>
+    <section class="dashboard-section" aria-labelledby="plannerHeading">
+      <h2 id="plannerHeading">Weekly Meal Planner</h2>
+      <div class="week-grid">
+        <div class="day-card">
+          <h3>Monday</h3>
+          <div id="Monday"></div>
+        </div>
+        <div class="day-card">
+          <h3>Tuesday</h3>
+          <div id="Tuesday"></div>
+        </div>
+        <div class="day-card">
+          <h3>Wednesday</h3>
+          <div id="Wednesday"></div>
+        </div>
+        <div class="day-card">
+          <h3>Thursday</h3>
+          <div id="Thursday"></div>
+        </div>
+        <div class="day-card">
+          <h3>Friday</h3>
+          <div id="Friday"></div>
+        </div>
+        <div class="day-card">
+          <h3>Saturday</h3>
+          <div id="Saturday"></div>
+        </div>
+        <div class="day-card">
+          <h3>Sunday</h3>
+          <div id="Sunday"></div>
+        </div>
       </div>
+    </section>
 
-      <div class="day-card">
-        <h3>Wednesday</h3>
-        <div id="Wednesday"></div>
-      </div>
-
-      <div class="day-card">
-        <h3>Thursday</h3>
-        <div id="Thursday"></div>
-      </div>
-
-      <div class="day-card">
-        <h3>Friday</h3>
-        <div id="Friday"></div>
-      </div>
-
-      <div class="day-card">
-        <h3>Saturday</h3>
-        <div id="Saturday"></div>
-      </div>
-
-      <div class="day-card">
-        <h3>Sunday</h3>
-        <div id="Sunday"></div>
-      </div>
-
-    </div>
-
-  </section>
-
-   <!-- ==========================
-       MEALS
-  =========================== -->
-<section>
-
-    <button onclick="backToCategories()">
-    กลับไปเลือกหมวด
-    </button>
-
-    <h2 id="currentCategory">
-    หมวดอาหาร
-    </h2>
-
-    <h2>Meals</h2>
-
-    <div id="mealContainer"
-         class="meal-grid">
-    </div>
-
-  </section>
+    <section class="dashboard-section meal-catalog" aria-labelledby="catalogHeading">
+      <h2 id="catalogHeading">Meal Catalog</h2>
+      <p id="currentCategory" aria-live="polite">กำลังโหลดหมวดอาหาร...</p>
+      <div id="mealContainer" class="meal-grid"></div>
+    </section>
+  </main>
 
   <!-- ==========================
        MODAL
@@ -199,7 +104,6 @@
     </div>
 
   </div>
-</div>
   <script src="https://unpkg.com/lucide@0.468.0"></script>
   <script src="dashboard.js"></script>
 

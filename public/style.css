@@ -74,21 +74,54 @@ header p{
 .category-grid{
   display:grid;
   grid-template-columns:
-    repeat(auto-fill,minmax(220px,1fr));
+    repeat(auto-fill,minmax(150px,1fr));
   gap:15px;
   margin-bottom:30px;
 }
 
 .category-card{
+  width:100%;
   background:white;
   border-radius:10px;
+  border:1px solid #ddd;
   padding:15px;
   cursor:pointer;
+  font:inherit;
+  text-align:center;
   box-shadow:0 2px 5px rgba(0,0,0,.1);
+  transition:background-color .15s ease, color .15s ease, transform .15s ease;
 }
 
 .category-card:hover{
   transform:scale(1.03);
+}
+
+.category-card.is-active{
+  border-color:#111;
+  background:#111;
+  color:#fff;
+}
+
+.category-section,
+.dashboard-section{
+  margin-bottom:30px;
+}
+
+.dashboard-section > h2,
+.category-section > h2{
+  margin-bottom:12px;
+}
+
+.queue-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:12px;
+}
+
+.meal-catalog #currentCategory{
+  margin-bottom:14px;
+  color:#666;
 }
 
 /* ==========================

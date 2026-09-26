@@ -56,6 +56,7 @@ const weeklyPlan = {
 // ==========================
 
 let categories = [];
+let selectedCategory = null;
 
 const allowedCategories = [
   "Beef",
@@ -94,6 +95,10 @@ async function loadCategories() {
   );
 
   renderCategories();
+
+  if (categories.length > 0) {
+    await openDashboard(categories[0].strCategory, false);
+  }
 }
 
 loadCategories();
@@ -114,36 +119,32 @@ function renderCategories() {
   categories.forEach(category => {
 
     container.innerHTML += `
-      <div
-        class="category-card"
+      <button
+        class="category-card${selectedCategory === category.strCategory ? " is-active" : ""}"
+        type="button"
+        aria-pressed="${selectedCategory === category.strCategory}"
         onclick="openDashboard('${category.strCategory}')"
       >
 
-        <h3>
+        <span>
             ${categoryThai[category.strCategory]
             || category.strCategory}
-        </h3>
+        </span>
 
-      </div>
+      </button>
     `;
   });
 }
-async function openDashboard(category){
-
-  document
-    .getElementById("categoryPage")
-    .classList.add("hidden");
-
-  document
-    .getElementById("dashboardPage")
-    .classList.remove("hidden");
+async function openDashboard(category, scrollToCatalog = true){
+  selectedCategory = category;
+  renderCategories();
 
   document
     .getElementById("currentCategory")
     .textContent =
-      categoryThai[category];
+      categoryThai[category] || category;
 
-  await loadMeals(category);
+  await loadMeals(category, scrollToCatalog);
 
 }
 
@@ -252,7 +253,7 @@ async function openDashboard(category){
 
   //renderMeals(data.meals);
 
-async function loadMeals(category) {
+async function loadMeals(category, scrollToCatalog = false) {
 
   const res =
     await fetch(
@@ -262,13 +263,15 @@ async function loadMeals(category) {
   const data =
     await res.json();
 
-  renderMeals(data.meals.slice(0,12));
+  if (selectedCategory !== category) return;
 
-  document
-    .getElementById("mealContainer")
-    .scrollIntoView({
-      behavior: "smooth"
-    });
+  renderMeals(data.meals || []);
+
+  if (scrollToCatalog) {
+    document
+      .getElementById("catalogHeading")
+      .scrollIntoView({ behavior: "smooth" });
+  }
 }
 //}
 
@@ -779,18 +782,6 @@ async function viewDetail(id) {
     )
     .classList
     .remove("hidden");
-
-}
-
-function backToCategories(){
-
-  document
-    .getElementById("dashboardPage")
-    .classList.add("hidden");
-
-  document
-    .getElementById("categoryPage")
-    .classList.remove("hidden");
 
 }
 
