@@ -302,39 +302,37 @@ function renderMeals(meals) {
             ${meal.strMeal}
           </h3>
 
-          <button
-            onclick="
-              viewDetail(
-                '${meal.idMeal}'
-              )
-            "
-          >
-            ดูรายละเอียด
-          </button>
+          <div class="meal-actions">
+            <button
+              class="meal-action"
+              type="button"
+              aria-label="ดูรายละเอียด"
+              title="ดูรายละเอียด"
+              onclick="viewDetail('${meal.idMeal}')"
+            >
+              <i data-lucide="eye" aria-hidden="true"></i>
+            </button>
 
-          <button
-            onclick="
-              addFavorite(
-                '${meal.idMeal}',
-                '${meal.strMeal}',
-                '${meal.strMealThumb}'
-              )
-            "
-          >
-            เพิ่มรายการโปรด
-          </button>
+            <button
+              class="meal-action"
+              type="button"
+              aria-label="เพิ่มรายการโปรด"
+              title="เพิ่มรายการโปรด"
+              onclick="addFavorite('${meal.idMeal}', '${meal.strMeal}', '${meal.strMealThumb}')"
+            >
+              <i data-lucide="heart" aria-hidden="true"></i>
+            </button>
 
-          <button
-            onclick="
-              addQueue(
-                '${meal.idMeal}',
-                '${meal.strMeal}',
-                '${meal.strMealThumb}'
-              )
-            "
-          >
-            เพิ่มลงแผนอาหาร
-          </button>
+            <button
+              class="meal-action"
+              type="button"
+              aria-label="เพิ่มลงแผนอาหาร"
+              title="เพิ่มลงแผนอาหาร"
+              onclick="addQueue('${meal.idMeal}', '${meal.strMeal}', '${meal.strMealThumb}')"
+            >
+              <i data-lucide="calendar-plus" aria-hidden="true"></i>
+            </button>
+          </div>
 
         </div>
 
@@ -342,6 +340,10 @@ function renderMeals(meals) {
     `;
 
   });
+
+  if (window.lucide) {
+    window.lucide.createIcons();
+  }
 
 }
 
