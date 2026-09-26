@@ -82,32 +82,32 @@ app.get("/api/meals/:category", async (req, res) => {
 // /api/search/chicken
 // =======================================
 
-app.get("/api/search/:keyword", async (req, res) => {
+//app.get("/api/search/:keyword", async (req, res) => {
 
-  try {
+  //try {
 
-    const keyword =
-      req.params.keyword;
+    //const keyword =
+      //req.params.keyword;
 
-    const response =
-      await fetch(
-        `https://www.themealdb.com/api/json/v1/1/search.php?s=${keyword}`
-      );
+    //const response =
+      //await fetch(
+        //`https://www.themealdb.com/api/json/v1/1/search.php?s=${keyword}`
+      //);
 
-    const data =
-      await response.json();
+    //const data =
+      //await response.json();
 
-    res.json(data);
+    //res.json(data);
 
-  } catch (err) {
+  //} catch (err) {
 
-    res.status(500).json({
-      error: err.message
-    });
+    //res.status(500).json({
+      //error: err.message
+    //});
 
-  }
+ // }
 
-});
+//});
 
 // =======================================
 // Route : ดูรายละเอียดอาหาร

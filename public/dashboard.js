@@ -412,18 +412,24 @@ function renderFavorites() {
     container.innerHTML += `
   <div class="mini-card">
 
-    <img
-      src="${meal.image}"
-      alt="${meal.name}"
-    >
+      <div class="mini-card-image">
+        <img
+          src="${meal.image}"
+          alt="${meal.name}"
+        >
+
+        <button
+          class="mini-card-remove"
+          type="button"
+          aria-label="ลบรายการโปรด"
+          title="ลบรายการโปรด"
+          onclick="removeFavorite('${meal.id}')"
+        >
+          &times;
+        </button>
+      </div>
 
     <p>${meal.name}</p>
-
-    <button
-      onclick="removeFavorite('${meal.id}')"
-    >
-      ลบ
-    </button>
 
   </div>
     `;
@@ -477,18 +483,24 @@ function renderQueue() {
     container.innerHTML += `
       <div class="mini-card">
 
-        <img
-          src="${meal.image}"
-          alt="${meal.name}"
-        >
+        <div class="mini-card-image">
+          <img
+            src="${meal.image}"
+            alt="${meal.name}"
+          >
+
+          <button
+            class="mini-card-remove"
+            type="button"
+            aria-label="ลบรายการจาก Weekly Meal"
+            title="ลบรายการจาก Weekly Meal"
+            onclick="removeQueue('${meal.id}')"
+          >
+            &times;
+          </button>
+        </div>
 
         <p>${meal.name}</p>
-
-        <button
-          onclick="removeQueue('${meal.id}')"
-        >
-          ลบ
-        </button>
 
       </div>
     `;

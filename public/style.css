@@ -130,6 +130,10 @@ header p{
 ========================== */
 
 #favoriteContainer{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:stretch;
+  gap:12px;
   background:white;
   padding:15px;
   border-radius:10px;
@@ -141,6 +145,10 @@ header p{
 ========================== */
 
 #queueContainer{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:stretch;
+  gap:12px;
   background:white;
   padding:15px;
   border-radius:10px;
@@ -216,14 +224,47 @@ header p{
 
 }
 
-.mini-card img{
+#favoriteContainer > .mini-card,
+#queueContainer > .mini-card{
+  box-sizing:border-box;
+  flex:0 1 160px;
+  max-width:100%;
+  margin:0;
+}
 
+.mini-card-image{
+  position:relative;
   width:100%;
-
   max-width:120px;
+  margin:0 auto;
+}
 
+.mini-card-image img{
+  display:block;
+  width:100%;
   border-radius:10px;
+}
 
+.mini-card-remove{
+  position:absolute;
+  top:6px;
+  right:6px;
+  display:grid;
+  place-items:center;
+  width:28px;
+  height:28px;
+  padding:0;
+  border:0;
+  border-radius:50%;
+  background:rgba(0,0,0,.72);
+  color:white;
+  font-size:20px;
+  line-height:1;
+  cursor:pointer;
+}
+
+.mini-card-remove:hover{
+  background:#c0392b;
 }
 
 .mini-card p{
