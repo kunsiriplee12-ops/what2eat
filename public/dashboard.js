@@ -459,11 +459,7 @@ function renderFavorites() {
       "favoriteContainer"
     );
 
-  container.innerHTML = "";
-
-  favorites.forEach(meal => {
-
-    container.innerHTML += `
+  const mealCards = favorites.map(meal => `
   <div class="mini-card">
 
       <div class="mini-card-image">
@@ -486,9 +482,14 @@ function renderFavorites() {
     <p>${meal.name}</p>
 
   </div>
-    `;
+  `).join("");
 
-  });
+  const emptySlots = Array.from(
+    { length: Math.max(0, 5 - favorites.length) },
+    () => '<div class="favorite-card-slot" aria-hidden="true"></div>'
+  ).join("");
+
+  container.innerHTML = mealCards + emptySlots;
 
 }
 function removeFavorite(id) {
@@ -532,11 +533,7 @@ function renderQueue() {
       "queueContainer"
     );
 
-  container.innerHTML = "";
-
-  mealQueue.items.forEach(meal => {
-
-    container.innerHTML += `
+  const mealCards = mealQueue.items.map(meal => `
       <div class="mini-card">
 
         <div class="mini-card-image">
@@ -559,9 +556,14 @@ function renderQueue() {
         <p>${meal.name}</p>
 
       </div>
-    `;
+  `).join("");
 
-  });
+  const emptySlots = Array.from(
+    { length: Math.max(0, 5 - mealQueue.items.length) },
+    () => '<div class="meal-card-slot" aria-hidden="true"></div>'
+  ).join("");
+
+  container.innerHTML = mealCards + emptySlots;
 
 }
 
@@ -660,29 +662,29 @@ function renderWeeklyPlan() {
         day
       );
 
-    container.innerHTML = "";
+    const card =
+      container.closest(".planner-card");
 
-    weeklyPlan[day]
-      .forEach(meal => {
+    const meals =
+      weeklyPlan[day];
 
-        container.innerHTML += `
-          <div class="mini-card">
+    card.classList.toggle(
+      "is-filled",
+      meals.length > 0
+    );
 
-            <div class="mini-card-image">
-              <img
-                src="${meal.image}"
-                alt="${meal.name}"
-              >
-            </div>
+    container.innerHTML = meals
+      .map(meal => `
+        <div class="mini-card-image">
+          <img
+            src="${meal.image}"
+            alt="${meal.name}"
+          >
+        </div>
 
-            <p>
-              ${meal.name}
-            </p>
-
-          </div>
-        `;
-
-      });
+        <p>${meal.name}</p>
+      `)
+      .join("");
 
   });
 

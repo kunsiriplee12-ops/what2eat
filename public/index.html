@@ -22,20 +22,31 @@
     <p>Weekly Meal Planner & Favorites</p>
   </header>
 
-  <section class="category-section" aria-labelledby="categoryHeading">
-    <h2 id="categoryHeading">Categories</h2>
+  <section class="category-section" aria-label="หมวดหมู่อาหาร">
     <div id="categoryContainer" class="category-grid"></div>
   </section>
 
   <main class="dashboard-layout">
-    <section class="dashboard-section" aria-labelledby="favoritesHeading">
+    <section class="dashboard-section favorites-section" aria-labelledby="favoritesHeading">
       <h2 id="favoritesHeading">Favorites</h2>
-      <div id="favoriteContainer"></div>
+      <div id="favoriteContainer">
+        <div class="favorite-card-slot" aria-hidden="true"></div>
+        <div class="favorite-card-slot" aria-hidden="true"></div>
+        <div class="favorite-card-slot" aria-hidden="true"></div>
+        <div class="favorite-card-slot" aria-hidden="true"></div>
+        <div class="favorite-card-slot" aria-hidden="true"></div>
+      </div>
     </section>
 
-    <section class="dashboard-section" aria-labelledby="queueHeading">
+    <section class="dashboard-section queue-section" aria-labelledby="queueHeading">
       <h2 id="queueHeading">Weekly Meals</h2>
-      <div id="queueContainer"></div>
+      <div id="queueContainer">
+        <div class="meal-card-slot" aria-hidden="true"></div>
+        <div class="meal-card-slot" aria-hidden="true"></div>
+        <div class="meal-card-slot" aria-hidden="true"></div>
+        <div class="meal-card-slot" aria-hidden="true"></div>
+        <div class="meal-card-slot" aria-hidden="true"></div>
+      </div>
       <div class="queue-actions">
         <button class="queue-action queue-action-add" type="button" onclick="generateWeeklyPlan()" aria-label="เพิ่มเข้าตาราง" title="เพิ่มเข้าตาราง">
           <i data-lucide="calendar-plus" aria-hidden="true"></i>
@@ -46,36 +57,50 @@
       </div>
     </section>
 
-    <section class="dashboard-section" aria-labelledby="plannerHeading">
+    <section class="dashboard-section planner-section" aria-labelledby="plannerHeading">
       <h2 id="plannerHeading">Weekly Meal Planner</h2>
       <div class="week-grid">
         <div class="day-card">
-          <h3>Monday</h3>
-          <div id="Monday"></div>
+          <div class="mini-card planner-card">
+            <h3>Monday</h3>
+            <div id="Monday" class="planner-day-content"></div>
+          </div>
         </div>
         <div class="day-card">
-          <h3>Tuesday</h3>
-          <div id="Tuesday"></div>
+          <div class="mini-card planner-card">
+            <h3>Tuesday</h3>
+            <div id="Tuesday" class="planner-day-content"></div>
+          </div>
         </div>
         <div class="day-card">
-          <h3>Wednesday</h3>
-          <div id="Wednesday"></div>
+          <div class="mini-card planner-card">
+            <h3>Wednesday</h3>
+            <div id="Wednesday" class="planner-day-content"></div>
+          </div>
         </div>
         <div class="day-card">
-          <h3>Thursday</h3>
-          <div id="Thursday"></div>
+          <div class="mini-card planner-card">
+            <h3>Thursday</h3>
+            <div id="Thursday" class="planner-day-content"></div>
+          </div>
         </div>
         <div class="day-card">
-          <h3>Friday</h3>
-          <div id="Friday"></div>
+          <div class="mini-card planner-card">
+            <h3>Friday</h3>
+            <div id="Friday" class="planner-day-content"></div>
+          </div>
         </div>
         <div class="day-card">
-          <h3>Saturday</h3>
-          <div id="Saturday"></div>
+          <div class="mini-card planner-card">
+            <h3>Saturday</h3>
+            <div id="Saturday" class="planner-day-content"></div>
+          </div>
         </div>
         <div class="day-card">
-          <h3>Sunday</h3>
-          <div id="Sunday"></div>
+          <div class="mini-card planner-card">
+            <h3>Sunday</h3>
+            <div id="Sunday" class="planner-day-content"></div>
+          </div>
         </div>
       </div>
     </section>
