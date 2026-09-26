@@ -318,6 +318,9 @@ function renderMeals(meals) {
               type="button"
               aria-label="เพิ่มรายการโปรด"
               title="เพิ่มรายการโปรด"
+              data-action="favorite"
+              data-meal-id="${meal.idMeal}"
+              aria-pressed="false"
               onclick="addFavorite('${meal.idMeal}', '${meal.strMeal}', '${meal.strMealThumb}')"
             >
               <i data-lucide="heart" aria-hidden="true"></i>
@@ -328,6 +331,9 @@ function renderMeals(meals) {
               type="button"
               aria-label="เพิ่มลงแผนอาหาร"
               title="เพิ่มลงแผนอาหาร"
+              data-action="queue"
+              data-meal-id="${meal.idMeal}"
+              aria-pressed="false"
               onclick="addQueue('${meal.idMeal}', '${meal.strMeal}', '${meal.strMealThumb}')"
             >
               <i data-lucide="calendar-plus" aria-hidden="true"></i>
@@ -341,10 +347,49 @@ function renderMeals(meals) {
 
   });
 
+  syncAllMealActionStates();
+
   if (window.lucide) {
     window.lucide.createIcons();
   }
 
+}
+
+function syncMealActionState(id) {
+  const mealId = String(id);
+  const isFavorite = favorites.some(
+    meal => String(meal.id) === mealId
+  );
+  const isQueued = mealQueue.items.some(
+    meal => String(meal.id) === mealId
+  );
+  const isPlanned = Object.values(weeklyPlan).some(
+    meals => meals.some(meal => String(meal.id) === mealId)
+  );
+
+  document
+    .querySelectorAll(".meal-action[data-meal-id]")
+    .forEach(button => {
+      if (button.dataset.mealId !== mealId) return;
+
+      const isActive = button.dataset.action === "favorite"
+        ? isFavorite
+        : isQueued || isPlanned;
+
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-pressed", String(isActive));
+    });
+}
+
+function syncAllMealActionStates() {
+  const mealIds = new Set(
+    Array.from(
+      document.querySelectorAll(".meal-action[data-meal-id]"),
+      button => button.dataset.mealId
+    )
+  );
+
+  mealIds.forEach(syncMealActionState);
 }
 
 // ==========================
@@ -388,7 +433,10 @@ function addFavorite(id, name, image) {
       meal => meal.id === id
     );
 
-  if (exists) return;
+  if (exists) {
+    syncMealActionState(id);
+    return;
+  }
 
   favorites.push({
     id,
@@ -397,6 +445,7 @@ function addFavorite(id, name, image) {
   });
 
   renderFavorites();
+  syncMealActionState(id);
 
 }
 
@@ -453,6 +502,7 @@ function removeFavorite(id) {
   }
 
   renderFavorites();
+  syncMealActionState(id);
 
 }
 
@@ -469,6 +519,7 @@ function addQueue(id, name, image) {
   });
 
   renderQueue();
+  syncMealActionState(id);
 }
 
 function renderQueue() {
@@ -528,6 +579,7 @@ function removeQueue(id) {
   }
 
   renderQueue();
+  syncMealActionState(id);
 
 }
 
@@ -571,6 +623,7 @@ function generateWeeklyPlan() {
   renderQueue();
 
   renderWeeklyPlan();
+  syncAllMealActionStates();
 
 }
 
@@ -585,6 +638,7 @@ function clearPlanner() {
   });
 
   renderWeeklyPlan();
+  syncAllMealActionStates();
 
 }
 
@@ -636,6 +690,41 @@ function renderWeeklyPlan() {
 // Detail Modal
 // ==========================
 
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, character => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[character]);
+}
+
+function getInstructionSteps(instructions) {
+  const text = String(instructions ?? "")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/p>\s*<p[^>]*>/gi, "\n")
+    .replace(/<[^>]*>/g, "")
+    .replace(/&nbsp;/gi, " ")
+    .trim();
+
+  let steps;
+
+  if (/\b(?:step|ขั้นตอน)\s*\d+\b/i.test(text)) {
+    steps = text.split(/(?=\b(?:step|ขั้นตอน)\s*\d+\b)/gi);
+  } else if (/(?:^|\s)\d+[).:-]\s/.test(text)) {
+    steps = text.split(/(?=(?:^|\s)\d+[).:-]\s)/g);
+  } else {
+    steps = text
+      .split(/\r?\n+/)
+      .flatMap(line => line.split(/(?<=[.!?])\s+/));
+  }
+
+  return steps
+    .map(step => step.replace(/^(?:(?:step|ขั้นตอน)\s*\d+\s*[:.)-]?|\d+[).:-])\s*/i, "").trim())
+    .filter(Boolean);
+}
+
 async function viewDetail(id) {
 
   const res =
@@ -649,37 +738,39 @@ async function viewDetail(id) {
   const meal =
     data.meals[0];
 
+  const instructionSteps =
+    getInstructionSteps(meal.strInstructions);
+
   document
     .getElementById(
       "mealDetail"
     )
     .innerHTML = `
       <h2>
-        ${meal.strMeal}
+        ${escapeHtml(meal.strMeal)}
       </h2>
 
       <img
-        src="${meal.strMealThumb}"
-        width="300"
+        src="${escapeHtml(meal.strMealThumb)}"
+        alt="${escapeHtml(meal.strMeal)}"
       >
 
       <p>
         <b>Category:</b>
-        ${meal.strCategory}
+        ${escapeHtml(meal.strCategory)}
       </p>
 
       <p>
         <b>Area:</b>
-        ${meal.strArea}
+        ${escapeHtml(meal.strArea)}
       </p>
 
-      <h3>
-        Instructions
-      </h3>
-
-      <p>
-        ${meal.strInstructions}
-      </p>
+      <section class="instruction-section" aria-labelledby="instructionTitle">
+        <h3 id="instructionTitle">Instructions</h3>
+        <ol class="instruction-list">
+          ${instructionSteps.map(step => `<li>${escapeHtml(step)}</li>`).join("")}
+        </ol>
+      </section>
     `;
 
   document
