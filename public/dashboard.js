@@ -609,10 +609,12 @@ function renderWeeklyPlan() {
         container.innerHTML += `
           <div class="mini-card">
 
-            <img
-              src="${meal.image}"
-              alt="${meal.name}"
-            >
+            <div class="mini-card-image">
+              <img
+                src="${meal.image}"
+                alt="${meal.name}"
+              >
+            </div>
 
             <p>
               ${meal.name}

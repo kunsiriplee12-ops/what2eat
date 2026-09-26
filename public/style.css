@@ -242,6 +242,8 @@ header p{
 .mini-card-image img{
   display:block;
   width:100%;
+  aspect-ratio:1;
+  object-fit:cover;
   border-radius:10px;
 }
 
