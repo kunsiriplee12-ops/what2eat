@@ -153,41 +153,25 @@ async function openDashboard(category, scrollToCatalog = true){
 // ==========================
 
 function sortAZ() {
+  const mealContainer = document.getElementById("mealContainer");
+  const mealCards = Array.from(
+    mealContainer.querySelectorAll(".meal-card")
+  );
 
-  const arr = [...categories];
+  mealCards.sort((firstCard, secondCard) => {
+    const firstName = firstCard.querySelector("h3")?.textContent.trim() ?? "";
+    const secondName = secondCard.querySelector("h3")?.textContent.trim() ?? "";
 
-  for (let i = 0; i < arr.length - 1; i++) {
+    return firstName.localeCompare(secondName, undefined, {
+      sensitivity: "base"
+    });
+  });
 
-    for (
-      let j = 0;
-      j < arr.length - i - 1;
-      j++
-    ) {
+  mealCards.forEach(mealCard => mealContainer.append(mealCard));
 
-      if (
-        arr[j].strCategory >
-        arr[j + 1].strCategory
-      ) {
-
-        [
-          arr[j],
-          arr[j + 1]
-        ] =
-        [
-          arr[j + 1],
-          arr[j]
-        ];
-
-      }
-
-    }
-
-  }
-
-  categories = arr;
-
-  renderCategories();
-
+  const sortButton = document.querySelector(".catalog-sort-btn");
+  sortButton?.classList.add("is-active");
+  sortButton?.setAttribute("aria-pressed", "true");
 }
 
 // ==========================
