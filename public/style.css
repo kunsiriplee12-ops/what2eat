@@ -73,31 +73,11 @@ body{
   color:rgba(255,255,255,.9);
 }
 
-/* ==========================
-   SEARCH
-========================== */
-/*
-.search-section{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  margin-bottom:20px;
-}
-
-.search-section input{
-  width:300px;
-  padding:10px;
-}
-
-.search-section button{
-  padding:10px 20px;
-  cursor:pointer;
-}
 
 /* ==========================
    SORT
 ========================== */
-/*
+
 .sort-section{
   text-align:center;
   margin-bottom:20px;

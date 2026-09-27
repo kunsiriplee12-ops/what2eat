@@ -152,106 +152,47 @@ async function openDashboard(category, scrollToCatalog = true){
 // Bubble Sort A-Z
 // ==========================
 
-//function sortAZ() {
+function sortAZ() {
 
-  //const arr = [...categories];
+  const arr = [...categories];
 
-  //for (let i = 0; i < arr.length - 1; i++) {
+  for (let i = 0; i < arr.length - 1; i++) {
 
-    //for (
-      //let j = 0;
-      //j < arr.length - i - 1;
-      //j++
-    //) {
+    for (
+      let j = 0;
+      j < arr.length - i - 1;
+      j++
+    ) {
 
-      //if (
-        //arr[j].strCategory >
-        //arr[j + 1].strCategory
-      //) {
+      if (
+        arr[j].strCategory >
+        arr[j + 1].strCategory
+      ) {
 
-        //[
-          //arr[j],
-          //arr[j + 1]
-        //] =
-        //[
-          //arr[j + 1],
-          //arr[j]
-        //];
+        [
+          arr[j],
+          arr[j + 1]
+        ] =
+        [
+          arr[j + 1],
+          arr[j]
+        ];
 
-      //}
+      }
 
-    //}
+    }
 
-  //}
+  }
 
-  //categories = arr;
+  categories = arr;
 
-  //renderCategories();
+  renderCategories();
 
-//}
-
-// ==========================
-// Bubble Sort Description
-// ==========================
-
-//function sortDescriptionLength() {
-
-  //const arr = [...categories];
-
-  //for (let i = 0; i < arr.length - 1; i++) {
-
-    //for (
-      //let j = 0;
-      //j < arr.length - i - 1;
-      //j++
-    //) {
-
-      //if (
-        //arr[j]
-          //.strCategoryDescription
-          //.length
-        //>
-        //arr[j + 1]
-          //.strCategoryDescription
-          //.length
-      //) {
-
-        //[
-          //arr[j],
-          //arr[j + 1]
-        //] =
-        //[
-          //arr[j + 1],
-          //arr[j]
-        //];
-
-      //}
-
-    //}
-
-  //}
-
-  //categories = arr;
-
-  //renderCategories();
-
-//}
+}
 
 // ==========================
 // Load Meals
 // ==========================
-
-//async function loadMeals(category) {
-
-  //const res =
-    //await fetch(
-      //`/api/meals/${category}`
-    //);
-
-  //const data =
-    //await res.json();
-
-  //renderMeals(data.meals);
 
 async function loadMeals(category, scrollToCatalog = false) {
 
@@ -394,35 +335,6 @@ function syncAllMealActionStates() {
 
   mealIds.forEach(syncMealActionState);
 }
-
-// ==========================
-// Search
-// ==========================
-
-///async function searchMeal() {
-
-  //const keyword =
-    //document
-      //.getElementById(
-      //  "searchInput"
-      //)
-      //.value;
-
-  //if (!keyword) return;
-
-  //const res =
-    //await fetch(
-   //   `/api/search/${keyword}`
-   // );
-
-  //const data =
-    //await res.json();
-
-  //if (data.meals) {
-    //renderMeals(data.meals);
-  //}
-
-//}
 
 // ==========================
 // Favorite
