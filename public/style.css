@@ -352,6 +352,53 @@ body{
   height:18px;
 }
 
+.back-to-top{
+  position:fixed;
+  z-index:20;
+  right:20px;
+  bottom:20px;
+  display:grid;
+  place-items:center;
+  width:40px;
+  height:40px;
+  padding:0;
+  border:1px solid rgba(255,255,255,.72);
+  border-radius:50%;
+  background:rgba(255,255,255,.82);
+  color:#273b35;
+  box-shadow:0 8px 24px rgba(0,0,0,.16);
+  -webkit-backdrop-filter:blur(12px);
+  backdrop-filter:blur(12px);
+  cursor:pointer;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transform:translateY(8px);
+  transition:opacity .2s ease, transform .2s ease, visibility .2s;
+}
+
+.back-to-top.is-visible{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transform:translateY(0);
+}
+
+.back-to-top:hover{
+  background:rgba(255,255,255,.96);
+  box-shadow:0 10px 28px rgba(0,0,0,.2);
+}
+
+.back-to-top:focus-visible{
+  outline:2px solid #397360;
+  outline-offset:3px;
+}
+
+.back-to-top svg{
+  width:18px;
+  height:18px;
+}
+
 .meal-catalog .meal-card{
   position:relative;
   height:260px;
@@ -445,7 +492,8 @@ body{
 
 @media (prefers-reduced-motion: reduce){
   .meal-card,
-  .meal-card .meal-action{
+  .meal-card .meal-action,
+  .back-to-top{
     transition:none;
   }
 
@@ -575,44 +623,89 @@ body{
 
 .modal-content{
   display:flex;
-  flex-direction:column;
-  width:80%;
-  max-width:900px;
+  position:relative;
+  width:90%;
+  max-width:780px;
   max-height:90vh;
   overflow:hidden;
-  background:white;
-  border-radius:10px;
-  padding:20px;
+  background:#ffffff;
+  border-radius:24px;
+  padding:24px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.2);
 }
 
 #mealDetail{
+  display:flex;
+  align-items:flex-start;
+  gap:20px;
+  width:100%;
   min-height:0;
   overflow:hidden;
 }
 
 #mealDetail > img{
   display:block;
-  width:100%;
-  max-width:300px;
-  height:auto;
-  margin:12px auto;
-  border-radius:8px;
+  flex-shrink:0;
+  width:320px;
+  height:100%;
+  min-height:260px;
+  object-fit:cover;
+  margin:0;
+  border-radius:16px;
 }
 
-#mealDetail > p{
-  margin:6px 0;
+.meal-detail-content{
+  display:flex;
+  flex:1;
+  flex-direction:column;
+  min-width:0;
+  min-height:0;
+  padding:20px 32px 0 0;
+}
+
+.meal-detail-content h2{
+  margin:0 0 12px;
+  font-size:26px;
+  font-weight:700;
+  line-height:1.2;
+}
+
+.meal-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.meal-meta p{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin:0;
+  padding:5px 10px;
+  border-radius:999px;
+  background:#f0f2f2;
+  color:#424a48;
+  font-size:12px;
+}
+
+.meal-meta b{
+  color:#242a28;
 }
 
 .instruction-section{
-  margin-top:18px;
+  display:flex;
+  flex:1;
+  flex-direction:column;
+  min-height:0;
+  margin-top:16px;
 }
 
 .instruction-section h3{
-  margin-bottom:10px;
+  margin-bottom:8px;
 }
 
 .instruction-list{
-  max-height:min(38vh, 320px);
+  max-height:180px;
   overflow-y:auto;
   overscroll-behavior:contain;
   padding:0 12px 0 38px;
@@ -656,20 +749,84 @@ body{
     font-size:3rem;
   }
 
-  .modal-content{
-    width:92%;
+  .modal{
     padding:16px;
   }
 
+  .modal-content{
+    width:min(100%, 460px);
+    max-height:84vh;
+    padding:14px;
+    border:1px solid rgba(255,255,255,.82);
+    border-radius:22px;
+    background:rgba(255,255,255,.96);
+    box-shadow:0 18px 44px rgba(0,0,0,.2);
+    -webkit-backdrop-filter:blur(14px);
+    backdrop-filter:blur(14px);
+  }
+
+  #mealDetail{
+    flex-direction:column;
+    gap:12px;
+    max-height:calc(84vh - 30px);
+    overflow-y:auto;
+    align-items:stretch;
+  }
+
+  #mealDetail > img{
+    width:100%;
+    height:160px;
+    min-height:0;
+  }
+
+  .meal-detail-content{
+    padding:0;
+  }
+
+  .meal-detail-content h2{
+    padding-right:32px;
+    margin-bottom:10px;
+    font-size:20px;
+  }
+
   .instruction-list{
-    max-height:34vh;
+    max-height:150px;
+    padding:0 8px 0 28px;
+  }
+
+  .instruction-list li{
+    padding:8px;
+    line-height:1.5;
+  }
+
+  .modal-content .close-btn{
+    top:10px;
+    right:10px;
+    width:30px;
+    height:30px;
   }
 }
 
 .close-btn{
-  float:right;
-  padding:10px;
+  position:absolute;
+  z-index:10;
+  top:12px;
+  right:12px;
+  display:grid;
+  place-items:center;
+  width:32px;
+  height:32px;
+  padding:0;
+  border:0;
+  border-radius:50%;
+  background:#f0f2f2;
+  color:#333;
+  font-size:16px;
   cursor:pointer;
+}
+
+.close-btn:hover{
+  background:#e2e8e7;
 }
 
 .mini-card{

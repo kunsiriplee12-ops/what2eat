@@ -751,31 +751,34 @@ async function viewDetail(id) {
       "mealDetail"
     )
     .innerHTML = `
-      <h2>
-        ${escapeHtml(meal.strMeal)}
-      </h2>
-
       <img
         src="${escapeHtml(meal.strMealThumb)}"
         alt="${escapeHtml(meal.strMeal)}"
       >
 
-      <p>
-        <b>Category:</b>
-        ${escapeHtml(meal.strCategory)}
-      </p>
+      <div class="meal-detail-content">
+        <h2>
+          ${escapeHtml(meal.strMeal)}
+        </h2>
 
-      <p>
-        <b>Area:</b>
-        ${escapeHtml(meal.strArea)}
-      </p>
+        <div class="meal-meta">
+          <p>
+            <b>Category</b>
+            <span>${escapeHtml(meal.strCategory)}</span>
+          </p>
+          <p>
+            <b>Area</b>
+            <span>${escapeHtml(meal.strArea)}</span>
+          </p>
+        </div>
 
-      <section class="instruction-section" aria-labelledby="instructionTitle">
-        <h3 id="instructionTitle">Instructions</h3>
-        <ol class="instruction-list">
-          ${instructionSteps.map(step => `<li>${escapeHtml(step)}</li>`).join("")}
-        </ol>
-      </section>
+        <section class="instruction-section" aria-labelledby="instructionTitle">
+          <h3 id="instructionTitle">Instructions</h3>
+          <ol class="instruction-list">
+            ${instructionSteps.map(step => `<li>${escapeHtml(step)}</li>`).join("")}
+          </ol>
+        </section>
+      </div>
     `;
 
   document
@@ -796,4 +799,32 @@ function closeModal() {
     .classList
     .add("hidden");
 
+}
+
+const backToTopButton = document.getElementById("backToTop");
+const mealCatalogSection = document.querySelector(".meal-catalog");
+
+if (backToTopButton && mealCatalogSection) {
+  const updateBackToTopVisibility = () => {
+    const catalogTop =
+      mealCatalogSection.getBoundingClientRect().top + window.scrollY;
+    const shouldShow =
+      window.scrollY >= catalogTop - window.innerHeight * 0.6;
+
+    backToTopButton.classList.toggle("is-visible", shouldShow);
+    backToTopButton.setAttribute("aria-hidden", String(!shouldShow));
+    backToTopButton.tabIndex = shouldShow ? 0 : -1;
+  };
+
+  window.addEventListener("scroll", updateBackToTopVisibility, { passive: true });
+  window.addEventListener("resize", updateBackToTopVisibility);
+  backToTopButton.addEventListener("click", () => {
+    const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? "auto"
+      : "smooth";
+
+    window.scrollTo({ top: 0, behavior });
+  });
+
+  updateBackToTopVisibility();
 }
