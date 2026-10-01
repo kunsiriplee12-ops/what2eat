@@ -157,19 +157,26 @@ function sortAZ() {
   const mealCards = Array.from(
     mealContainer.querySelectorAll(".meal-card")
   );
+  const sortButton = document.querySelector(".catalog-sort-btn");
+  const sortDescending = sortButton?.textContent.includes("(A-Z)") ?? true;
 
-  mealCards.sort((firstCard, secondCard) => {
-    const firstName = firstCard.querySelector("h3")?.textContent.trim() ?? "";
-    const secondName = secondCard.querySelector("h3")?.textContent.trim() ?? "";
+  for (let pass = 0; pass < mealCards.length - 1; pass++) {
+    for (let index = 0; index < mealCards.length - 1 - pass; index++) {
+      const firstName = mealCards[index].querySelector("h3")?.textContent.trim() ?? "";
+      const secondName = mealCards[index + 1].querySelector("h3")?.textContent.trim() ?? "";
+      const comparison = firstName.localeCompare(secondName, undefined, { sensitivity: "base" });
 
-    return firstName.localeCompare(secondName, undefined, {
-      sensitivity: "base"
-    });
-  });
+      if (sortDescending ? comparison < 0 : comparison > 0) {
+        [mealCards[index], mealCards[index + 1]] = [mealCards[index + 1], mealCards[index]];
+      }
+    }
+  }
 
   mealCards.forEach(mealCard => mealContainer.append(mealCard));
 
-  const sortButton = document.querySelector(".catalog-sort-btn");
+  if (sortButton) {
+    sortButton.textContent = `เรียงตามชื่อ (${sortDescending ? "Z-A" : "A-Z"})`;
+  }
   sortButton?.classList.add("is-active");
   sortButton?.setAttribute("aria-pressed", "true");
 }
