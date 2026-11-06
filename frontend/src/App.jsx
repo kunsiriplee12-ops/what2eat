@@ -20,14 +20,11 @@ const initialWeeklyPlan = () => Object.fromEntries(weekDays.map((day) => [day, [
 const getRoute = () => window.location.pathname;
 
 function normalizeRoute(pathname) {
-  return pathname === "/" ? "/catalog" : pathname;
+  return pathname === "/" || navigationGraph.hasNode(pathname) ? pathname : "/";
 }
 
 export default function App() {
-  const [activePage, setActivePage] = useState(() => {
-    const route = normalizeRoute(getRoute());
-    return navigationGraph.hasNode(route) ? route : "/catalog";
-  });
+  const [activePage, setActivePage] = useState(() => normalizeRoute(getRoute()));
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [meals, setMeals] = useState([]);
@@ -42,26 +39,34 @@ export default function App() {
 
   useEffect(() => {
     const route = normalizeRoute(getRoute());
-    if (!navigationGraph.hasNode(route)) {
-      window.history.replaceState({}, "", "/catalog");
-      setActivePage("/catalog");
-    } else if (route !== getRoute()) {
+    if (route !== getRoute()) {
       window.history.replaceState({}, "", route);
       setActivePage(route);
     }
 
     const handlePopState = () => {
       const nextRoute = normalizeRoute(getRoute());
-      const validRoute = navigationGraph.hasNode(nextRoute) ? nextRoute : "/catalog";
-      if (validRoute !== getRoute()) {
-        window.history.replaceState({}, "", validRoute);
-      }
-      setActivePage(validRoute);
+      if (nextRoute !== getRoute()) window.history.replaceState({}, "", nextRoute);
+      setActivePage(nextRoute);
     };
 
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
+
+  useEffect(() => {
+    if (activePage !== "/") return undefined;
+
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+    };
+  }, [activePage]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -147,13 +152,21 @@ export default function App() {
 
   const navigateTo = useCallback((route) => {
     if (!navigationGraph.hasNode(route)) return;
-    if (route !== activePage && !navigationGraph.hasEdge(activePage, route)) return;
+    if (activePage !== "/" && route !== activePage && !navigationGraph.hasEdge(activePage, route)) return;
 
     if (route !== activePage) {
       window.history.pushState({}, "", route);
       setActivePage(route);
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [activePage]);
+
+  const navigateHome = useCallback(() => {
+    if (activePage !== "/") {
+      window.history.pushState({}, "", "/");
+      setActivePage("/");
+    }
+    window.scrollTo({ top: 0, behavior: "auto" });
   }, [activePage]);
 
   const toggleFavorite = (meal) => {
@@ -201,65 +214,71 @@ export default function App() {
   return (
     <>
       <Navbar
+        isLanding={activePage === "/"}
         activePage={activePage}
         onNavigate={navigateTo}
+        onHome={navigateHome}
         categories={categories}
         selectedCategory={selectedCategory}
         categoryThai={categoryThai}
         onSelectCategory={selectCategory}
       />
-      <main className="dashboard-layout">
-        {activePage === "/catalog" && (
-          <CatalogPage
-            meals={meals}
-            status={catalogStatus}
-            selectedCategory={categoryThai[selectedCategory] || selectedCategory}
-            favorites={favorites}
-            queuedMeals={queuedMeals}
-            plannedIds={plannedIds}
-            sortDirection={sortDirection}
-            sortActive={sortActive}
-            onSort={sortMeals}
-            onViewDetail={openMealDetail}
-            onToggleFavorite={toggleFavorite}
-            onToggleQueue={toggleQueue}
-          />
-        )}
-        {activePage === "/favorites" && (
-          <FavoritesPage
-            meals={favorites}
-            onRemove={(id) => setFavorites((current) => current.filter((meal) => meal.id !== id))}
-          />
-        )}
-        {activePage === "/planner" && (
-          <PlannerPage
-            meals={queuedMeals}
-            weeklyPlan={weeklyPlan}
-            onRemove={(index) => setQueuedMeals((current) => current.filter((_, itemIndex) => itemIndex !== index))}
-            onGenerate={generateWeeklyPlan}
-            onClear={clearPlanner}
-          />
-        )}
-      </main>
-      <button
-        id="backToTop"
-        className={`back-to-top${backToTopVisible ? " is-visible" : ""}`}
-        type="button"
-        aria-label="Back to top"
-        title="Back to top"
-        aria-hidden={!backToTopVisible}
-        tabIndex={backToTopVisible ? 0 : -1}
-        onClick={() => {
-          const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-            ? "auto"
-            : "smooth";
-          window.scrollTo({ top: 0, behavior });
-        }}
-      >
-        <i data-lucide="arrow-up" aria-hidden="true"></i>
-      </button>
-      {activePage === "/catalog" && (
-        <MealModal mealId={mealModalId} onClose={closeMealDetail} />
+      {activePage !== "/" && (
+        <>
+          <main className="dashboard-layout">
+            {activePage === "/catalog" && (
+              <CatalogPage
+                meals={meals}
+                status={catalogStatus}
+                selectedCategory={categoryThai[selectedCategory] || selectedCategory}
+                favorites={favorites}
+                queuedMeals={queuedMeals}
+                plannedIds={plannedIds}
+                sortDirection={sortDirection}
+                sortActive={sortActive}
+                onSort={sortMeals}
+                onViewDetail={openMealDetail}
+                onToggleFavorite={toggleFavorite}
+                onToggleQueue={toggleQueue}
+              />
+            )}
+            {activePage === "/favorites" && (
+              <FavoritesPage
+                meals={favorites}
+                onRemove={(id) => setFavorites((current) => current.filter((meal) => meal.id !== id))}
+              />
+            )}
+            {activePage === "/planner" && (
+              <PlannerPage
+                meals={queuedMeals}
+                weeklyPlan={weeklyPlan}
+                onRemove={(index) => setQueuedMeals((current) => current.filter((_, itemIndex) => itemIndex !== index))}
+                onGenerate={generateWeeklyPlan}
+                onClear={clearPlanner}
+              />
+            )}
+          </main>
+          <button
+            id="backToTop"
+            className={`back-to-top${backToTopVisible ? " is-visible" : ""}`}
+            type="button"
+            aria-label="Back to top"
+            title="Back to top"
+            aria-hidden={!backToTopVisible}
+            tabIndex={backToTopVisible ? 0 : -1}
+            onClick={() => {
+              const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+                ? "auto"
+                : "smooth";
+              window.scrollTo({ top: 0, behavior });
+            }}
+          >
+            <i data-lucide="arrow-up" aria-hidden="true"></i>
+          </button>
+          {activePage === "/catalog" && (
+            <MealModal mealId={mealModalId} onClose={closeMealDetail} />
+          )}
+        </>
       )}
     </>
   );

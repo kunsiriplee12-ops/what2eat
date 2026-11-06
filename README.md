@@ -6,12 +6,12 @@ What2Eat แบ่งการทำงานเป็น Frontend React + Vite 
 
 | ส่วน | โฟลเดอร์/ไฟล์ | หน้าที่ |
 |---|---|---|
-| Frontend | `frontend/src/App.jsx` | จัดการข้อมูลด้วย React State และ render เฉพาะหน้า `/catalog`, `/favorites` หรือ `/planner` |
-| Frontend | `frontend/src/components/Navbar.jsx` | Hero เดิม, ปุ่มนำทางระหว่างหน้า และปุ่มหมวดอาหาร โดยรักษา class เดิม |
+| Frontend | `frontend/src/App.jsx` | จัดการข้อมูลด้วย React State; `/` เป็น Landing แยก และ render เฉพาะหน้า `/catalog`, `/favorites` หรือ `/planner` |
+| Frontend | `frontend/src/components/Navbar.jsx` | Full-screen video Hero ที่รับ wheel/touch เพื่อ fade ข้อความ, ปุ่ม yes และ Modal นำทาง; sub-pages มี Navbar และปุ่มกลับ Landing |
 | Frontend | `frontend/src/components/MealCard.jsx`, `MealModal.jsx`, `StateFeedback.jsx` | การ์ดอาหาร หน้าต่างรายละเอียด และข้อความสถานะ |
 | Frontend | `frontend/src/pages/` | ส่วน Favorites, Weekly Meals/Planner และ Meal Catalog |
 | Frontend | `frontend/src/utils/` | Graph, Queue และ Bubble Sort |
-| Frontend | `frontend/src/App.css` | สำเนาตรงของ `public/style.css`; ไม่ปรับค่าสไตล์ |
+| Frontend | `frontend/src/App.css` | ใช้สไตล์เดิมจาก `public/style.css` พร้อมกฎเพิ่มเติมสำหรับ Landing และ Navbar layout |
 | Backend | `backend/server.js` | Express API proxy, in-memory cache, ตรวจสอบ input และเสิร์ฟ production build |
 | Backend | `backend/package.json` | dependencies และคำสั่งรัน Express |
 | Legacy Reference | `public/` | เก็บ HTML/CSS/JS และ hero video ต้นฉบับไว้ |
@@ -20,7 +20,7 @@ What2Eat แบ่งการทำงานเป็น Frontend React + Vite 
 
 | โครงสร้าง/อัลกอริทึม | ไฟล์ | การใช้งาน |
 |---|---|---|
-| Graph (Adjacency List) | `frontend/src/utils/Graph.js` | เก็บ Node `/catalog`, `/favorites`, `/planner` และ Edge สำหรับการเปลี่ยนเส้นทาง; Navbar และ Router ใช้กราฟเดียวกัน |
+| Graph (Adjacency List) | `frontend/src/utils/Graph.js` | เก็บ Node `/catalog`, `/favorites`, `/planner` และ Edge สำหรับการเปลี่ยนเส้นทางจากปุ่มใน Hero Modal; Navbar และ Router ใช้กราฟเดียวกัน |
 | Queue (FIFO) | `frontend/src/utils/Queue.js` | จัดคิวอาหารตามลำดับที่เพิ่ม และนำอาหารไปใส่วันว่างตามลำดับ |
 | Bubble Sort | `frontend/src/utils/sorting.js` | เรียงการ์ดตามชื่อเมื่อกดปุ่ม A-Z/Z-A โดยไม่แก้ไข array ต้นฉบับ |
 
@@ -41,7 +41,7 @@ What2Eat แบ่งการทำงานเป็น Frontend React + Vite 
 
 | สถานะ | การแสดงผล |
 |---|---|
-| Loading | คงข้อความเริ่มต้น “กำลังโหลดหมวดอาหาร...” และแสดงสถานะโหลดรายละเอียดใน Modal; ระหว่างโหลดเมนูคงชื่อหมวดตาม UI เดิม |
+| Loading | คงข้อความเริ่มต้น “กำลังโหลดหมวดอาหาร...” และแสดงสถานะโหลดรายละเอียดใน Modal; Landing แสดง Hero ขณะโหลด API |
 | Empty | ข้อความแจ้งเมื่อไม่พบหมวด/เมนู/รายละเอียด |
 | Error | ข้อความแจ้งเมื่อเรียก API ไม่สำเร็จ |
 | Success | แสดงหมวด การ์ดเมนู รายการโปรด คิว และแผนอาหาร |
@@ -62,4 +62,4 @@ npm run dev --prefix backend
 npm run dev --prefix frontend
 ```
 
-เปิด Vite URL ที่แสดงใน Terminal (ปกติ `http://localhost:5173`). หน้าเว็บเข้าได้ที่ `/` หรือ `/catalog`, `/favorites` และ `/planner`; ปุ่มนำทางรองรับ browser back/forward และ deep link. สำหรับ production ใช้ `npm run build --prefix frontend` แล้ว `npm start --prefix backend`.
+เปิด Vite URL ที่แสดงใน Terminal (ปกติ `http://localhost:5173`). หน้า `/` เป็น Landing แบบเต็มจอ: เลื่อน wheel หรือ swipe ขึ้นเพื่อแสดงคำถามและปุ่ม `yes`; เลือกหน้าได้จาก Modal. หน้าเว็บยังเข้าโดยตรงได้ที่ `/catalog`, `/favorites` และ `/planner`; Navbar รองรับสลับหน้า/กลับ Landing รวมทั้ง browser back/forward และ deep link. สำหรับ production ใช้ `npm run build --prefix frontend` แล้ว `npm start --prefix backend`.
