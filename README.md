@@ -6,8 +6,8 @@ What2Eat แบ่งการทำงานเป็น Frontend React + Vite 
 
 | ส่วน | โฟลเดอร์/ไฟล์ | หน้าที่ |
 |---|---|---|
-| Frontend | `frontend/src/App.jsx` | จัดการข้อมูลเมนู หมวดอาหาร Favorites คิว และแผนรายสัปดาห์ด้วย React State |
-| Frontend | `frontend/src/components/Navbar.jsx` | Hero เดิมและปุ่มหมวดอาหาร โดยรักษา class และโครงสร้างการแสดงผลเดิม |
+| Frontend | `frontend/src/App.jsx` | จัดการข้อมูลด้วย React State และ render เฉพาะหน้า `/catalog`, `/favorites` หรือ `/planner` |
+| Frontend | `frontend/src/components/Navbar.jsx` | Hero เดิม, ปุ่มนำทางระหว่างหน้า และปุ่มหมวดอาหาร โดยรักษา class เดิม |
 | Frontend | `frontend/src/components/MealCard.jsx`, `MealModal.jsx`, `StateFeedback.jsx` | การ์ดอาหาร หน้าต่างรายละเอียด และข้อความสถานะ |
 | Frontend | `frontend/src/pages/` | ส่วน Favorites, Weekly Meals/Planner และ Meal Catalog |
 | Frontend | `frontend/src/utils/` | Graph, Queue และ Bubble Sort |
@@ -20,7 +20,7 @@ What2Eat แบ่งการทำงานเป็น Frontend React + Vite 
 
 | โครงสร้าง/อัลกอริทึม | ไฟล์ | การใช้งาน |
 |---|---|---|
-| Graph (Adjacency List) | `frontend/src/utils/Graph.js` | เก็บการเชื่อมโยงหมวดอาหารและใช้สร้างปุ่มนำทางหมวดแบบ Dynamic ใน Navbar |
+| Graph (Adjacency List) | `frontend/src/utils/Graph.js` | เก็บ Node `/catalog`, `/favorites`, `/planner` และ Edge สำหรับการเปลี่ยนเส้นทาง; Navbar และ Router ใช้กราฟเดียวกัน |
 | Queue (FIFO) | `frontend/src/utils/Queue.js` | จัดคิวอาหารตามลำดับที่เพิ่ม และนำอาหารไปใส่วันว่างตามลำดับ |
 | Bubble Sort | `frontend/src/utils/sorting.js` | เรียงการ์ดตามชื่อเมื่อกดปุ่ม A-Z/Z-A โดยไม่แก้ไข array ต้นฉบับ |
 
@@ -55,11 +55,11 @@ npm install --prefix backend
 npm install --prefix frontend
 ```
 
-เริ่มโหมดพัฒนาใน Terminal แยกกัน:
+เริ่มโหมดพัฒนาใน Terminal แยกกัน โดย Vite proxy `/api` ไปยัง Express port `3000`:
 
 ```bash
 npm run dev --prefix backend
 npm run dev --prefix frontend
 ```
 
-เปิด Vite URL ที่แสดงใน Terminal (ปกติ `http://localhost:5173`). สำหรับ production ใช้ `npm run build --prefix frontend` แล้ว `npm start --prefix backend`.
+เปิด Vite URL ที่แสดงใน Terminal (ปกติ `http://localhost:5173`). หน้าเว็บเข้าได้ที่ `/` หรือ `/catalog`, `/favorites` และ `/planner`; ปุ่มนำทางรองรับ browser back/forward และ deep link. สำหรับ production ใช้ `npm run build --prefix frontend` แล้ว `npm start --prefix backend`.

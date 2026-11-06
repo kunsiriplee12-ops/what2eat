@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar.jsx";
 import CatalogPage from "./pages/CatalogPage.jsx";
 import FavoritesPage from "./pages/FavoritesPage.jsx";
 import PlannerPage from "./pages/PlannerPage.jsx";
+import { navigationGraph } from "./utils/Graph.js";
 import Queue from "./utils/Queue.js";
 
 const allowedCategories = ["Beef", "Pasta", "Chicken", "Seafood", "Dessert"];
@@ -16,8 +17,17 @@ const categoryThai = {
 };
 const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 const initialWeeklyPlan = () => Object.fromEntries(weekDays.map((day) => [day, []]));
+const getRoute = () => window.location.pathname;
+
+function normalizeRoute(pathname) {
+  return pathname === "/" ? "/catalog" : pathname;
+}
 
 export default function App() {
+  const [activePage, setActivePage] = useState(() => {
+    const route = normalizeRoute(getRoute());
+    return navigationGraph.hasNode(route) ? route : "/catalog";
+  });
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [meals, setMeals] = useState([]);
@@ -29,6 +39,29 @@ export default function App() {
   const [sortActive, setSortActive] = useState(false);
   const [mealModalId, setMealModalId] = useState(null);
   const [backToTopVisible, setBackToTopVisible] = useState(false);
+
+  useEffect(() => {
+    const route = normalizeRoute(getRoute());
+    if (!navigationGraph.hasNode(route)) {
+      window.history.replaceState({}, "", "/catalog");
+      setActivePage("/catalog");
+    } else if (route !== getRoute()) {
+      window.history.replaceState({}, "", route);
+      setActivePage(route);
+    }
+
+    const handlePopState = () => {
+      const nextRoute = normalizeRoute(getRoute());
+      const validRoute = navigationGraph.hasNode(nextRoute) ? nextRoute : "/catalog";
+      if (validRoute !== getRoute()) {
+        window.history.replaceState({}, "", validRoute);
+      }
+      setActivePage(validRoute);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -84,7 +117,10 @@ export default function App() {
 
   useEffect(() => {
     const catalog = document.querySelector(".meal-catalog");
-    if (!catalog) return undefined;
+    if (!catalog) {
+      setBackToTopVisible(false);
+      return undefined;
+    }
     const updateVisibility = () => {
       const catalogTop = catalog.getBoundingClientRect().top + window.scrollY;
       setBackToTopVisible(window.scrollY >= catalogTop - window.innerHeight * 0.6);
@@ -96,7 +132,7 @@ export default function App() {
       window.removeEventListener("scroll", updateVisibility);
       window.removeEventListener("resize", updateVisibility);
     };
-  }, [catalogStatus]);
+  }, [activePage, catalogStatus]);
 
   const favoriteIds = useMemo(() => new Set(favorites.map((meal) => meal.id)), [favorites]);
   const plannedIds = useMemo(
@@ -108,6 +144,17 @@ export default function App() {
     setSelectedCategory(category);
     document.getElementById("catalogHeading")?.scrollIntoView({ behavior: "smooth" });
   }, []);
+
+  const navigateTo = useCallback((route) => {
+    if (!navigationGraph.hasNode(route)) return;
+    if (route !== activePage && !navigationGraph.hasEdge(activePage, route)) return;
+
+    if (route !== activePage) {
+      window.history.pushState({}, "", route);
+      setActivePage(route);
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [activePage]);
 
   const toggleFavorite = (meal) => {
     const id = String(meal.idMeal);
@@ -154,37 +201,45 @@ export default function App() {
   return (
     <>
       <Navbar
+        activePage={activePage}
+        onNavigate={navigateTo}
         categories={categories}
         selectedCategory={selectedCategory}
         categoryThai={categoryThai}
         onSelectCategory={selectCategory}
       />
       <main className="dashboard-layout">
-        <FavoritesPage
-          meals={favorites}
-          onRemove={(id) => setFavorites((current) => current.filter((meal) => meal.id !== id))}
-        />
-        <PlannerPage
-          meals={queuedMeals}
-          weeklyPlan={weeklyPlan}
-          onRemove={(index) => setQueuedMeals((current) => current.filter((_, itemIndex) => itemIndex !== index))}
-          onGenerate={generateWeeklyPlan}
-          onClear={clearPlanner}
-        />
-        <CatalogPage
-          meals={meals}
-          status={catalogStatus}
-          selectedCategory={categoryThai[selectedCategory] || selectedCategory}
-          favorites={favorites}
-          queuedMeals={queuedMeals}
-          plannedIds={plannedIds}
-          sortDirection={sortDirection}
-          sortActive={sortActive}
-          onSort={sortMeals}
-          onViewDetail={openMealDetail}
-          onToggleFavorite={toggleFavorite}
-          onToggleQueue={toggleQueue}
-        />
+        {activePage === "/catalog" && (
+          <CatalogPage
+            meals={meals}
+            status={catalogStatus}
+            selectedCategory={categoryThai[selectedCategory] || selectedCategory}
+            favorites={favorites}
+            queuedMeals={queuedMeals}
+            plannedIds={plannedIds}
+            sortDirection={sortDirection}
+            sortActive={sortActive}
+            onSort={sortMeals}
+            onViewDetail={openMealDetail}
+            onToggleFavorite={toggleFavorite}
+            onToggleQueue={toggleQueue}
+          />
+        )}
+        {activePage === "/favorites" && (
+          <FavoritesPage
+            meals={favorites}
+            onRemove={(id) => setFavorites((current) => current.filter((meal) => meal.id !== id))}
+          />
+        )}
+        {activePage === "/planner" && (
+          <PlannerPage
+            meals={queuedMeals}
+            weeklyPlan={weeklyPlan}
+            onRemove={(index) => setQueuedMeals((current) => current.filter((_, itemIndex) => itemIndex !== index))}
+            onGenerate={generateWeeklyPlan}
+            onClear={clearPlanner}
+          />
+        )}
       </main>
       <button
         id="backToTop"
@@ -203,7 +258,9 @@ export default function App() {
       >
         <i data-lucide="arrow-up" aria-hidden="true"></i>
       </button>
-      <MealModal mealId={mealModalId} onClose={closeMealDetail} />
+      {activePage === "/catalog" && (
+        <MealModal mealId={mealModalId} onClose={closeMealDetail} />
+      )}
     </>
   );
 }

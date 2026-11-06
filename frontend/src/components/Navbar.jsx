@@ -1,34 +1,18 @@
-import { useMemo } from "react";
-import Graph from "../utils/Graph.js";
+import { navigationGraph } from "../utils/Graph.js";
 
 export default function Navbar({
+  activePage,
+  onNavigate,
   categories,
   selectedCategory,
   categoryThai,
   onSelectCategory,
 }) {
-  const categoryGraph = useMemo(() => {
-    const graph = new Graph();
-    categories.forEach((category, index) => {
-      graph.addVertex(category.strCategory);
-      if (index > 0) {
-        graph.addEdge(
-          categories[index - 1].strCategory,
-          category.strCategory,
-        );
-        graph.addEdge(
-          category.strCategory,
-          categories[index - 1].strCategory,
-        );
-      }
-    });
-    return graph;
-  }, [categories]);
-
-  const orderedCategories = categoryGraph
-    .getVertices()
-    .map((name) => categories.find((category) => category.strCategory === name))
-    .filter(Boolean);
+  const pageLabels = {
+    "/catalog": "Meal Catalog",
+    "/favorites": "Favorites",
+    "/planner": "Weekly Meal Planner",
+  };
 
   return (
     <>
@@ -42,7 +26,19 @@ export default function Navbar({
 
       <section className="category-section" aria-label="หมวดหมู่อาหาร">
         <div id="categoryContainer" className="category-grid">
-          {orderedCategories.map((category) => (
+          {navigationGraph.getNodes().map((route) => (
+            <button
+              key={route}
+              className={`category-card${activePage === route ? " is-active" : ""}`}
+              type="button"
+              aria-current={activePage === route ? "page" : undefined}
+              aria-pressed={activePage === route}
+              onClick={() => onNavigate(route)}
+            >
+              <span>{pageLabels[route]}</span>
+            </button>
+          ))}
+          {activePage === "/catalog" && categories.map((category) => (
             <button
               key={category.strCategory}
               className={`category-card${selectedCategory === category.strCategory ? " is-active" : ""}`}
