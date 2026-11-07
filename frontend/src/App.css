@@ -484,6 +484,19 @@ body{
 }
 
 @media (max-width:600px){
+  .queue-section #queueContainer{
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:10px;
+  }
+
+  .planner-meal-card{
+    height:180px;
+  }
+
+  .planner-day-meal{
+    height:160px;
+  }
+
   .meal-catalog .meal-grid{
     grid-template-columns:repeat(2, 1fr);
     gap:10px;
@@ -517,12 +530,16 @@ body{
 @media (prefers-reduced-motion: reduce){
   .meal-card,
   .meal-card .meal-action,
+  .planner-meal-card,
+  .planner-meal-action,
   .back-to-top{
     transition:none;
   }
 
   .meal-card:hover,
-  .meal-card:focus-within{
+  .meal-card:focus-within,
+  .planner-meal-card:hover,
+  .planner-meal-card:focus-within{
     transform:none;
   }
 }
@@ -532,14 +549,95 @@ body{
 ========================== */
 
 #favoriteContainer{
-  display:flex;
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));
   align-items:stretch;
-  gap:14px;
-  overflow-x:auto;
-  padding:8px 4px 16px 4px;
+  gap:15px;
+  padding:8px 4px 16px;
   background:transparent;
   margin-bottom:30px;
   scrollbar-width:none;
+}
+
+.favorite-meal-card{
+  position:relative;
+  height:260px;
+  overflow:hidden;
+  border-radius:16px;
+  background:#202522;
+  box-shadow:0 2px 8px rgba(0,0,0,.12);
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+
+.favorite-meal-card:hover,
+.favorite-meal-card:focus-within{
+  transform:translateY(-5px);
+  box-shadow:0 10px 22px rgba(0,0,0,.18);
+}
+
+.favorite-meal-image{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.favorite-meal-content{
+  position:absolute;
+  right:0;
+  bottom:0;
+  left:0;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding:14px;
+  background:linear-gradient(to top, rgba(0,0,0,.86), rgba(0,0,0,.38) 65%, transparent);
+  color:#fff;
+}
+
+.favorite-meal-content h3{
+  overflow:hidden;
+  color:#fff;
+  font-size:15px;
+  line-height:1.3;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.favorite-meal-actions{
+  display:flex;
+  gap:8px;
+}
+
+.favorite-meal-action{
+  display:grid;
+  flex:1;
+  place-items:center;
+  height:36px;
+  padding:0;
+  border:1px solid rgba(255,255,255,.28);
+  border-radius:8px;
+  background:rgba(255,255,255,.2);
+  color:#fff;
+  -webkit-backdrop-filter:blur(8px);
+  backdrop-filter:blur(8px);
+  cursor:pointer;
+  transition:background-color .18s ease, transform .18s ease;
+}
+
+.favorite-meal-action:hover{
+  transform:translateY(-1px);
+  background:rgba(255,255,255,.36);
+}
+
+.favorite-meal-action:focus-visible{
+  outline:2px solid #fff;
+  outline-offset:2px;
+}
+
+.favorite-meal-action svg{
+  width:18px;
+  height:18px;
 }
 
 /* ==========================
@@ -558,10 +656,137 @@ body{
   scrollbar-width:none;
 }
 
+.queue-section #queueContainer{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));
+  align-items:stretch;
+  overflow:visible;
+}
+
+.planner-meal-card{
+  position:relative;
+  width:100%;
+  min-width:0;
+  height:180px;
+  overflow:hidden;
+  border-radius:16px;
+  background:transparent;
+  box-shadow:0 2px 8px rgba(0,0,0,.12);
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+
+.planner-meal-card:hover,
+.planner-meal-card:focus-within{
+  transform:translateY(-4px);
+  box-shadow:0 10px 22px rgba(0,0,0,.18);
+}
+
+.planner-meal-card > img{
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.planner-meal-card-content{
+  position:absolute;
+  right:0;
+  bottom:0;
+  left:0;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  padding:8px 10px;
+  background:linear-gradient(to top, rgba(0,0,0,.88), rgba(0,0,0,.38) 68%, transparent);
+  color:#fff;
+}
+
+.planner-meal-card-content h3,
+.planner-meal-card-content h4{
+  overflow:hidden;
+  color:#fff;
+  font-size:13px;
+  font-weight:600;
+  line-height:1.3;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.planner-meal-actions{
+  display:flex;
+  gap:5px;
+}
+
+.planner-meal-action{
+  display:grid;
+  flex:1;
+  place-items:center;
+  min-width:0;
+  height:28px;
+  padding:0;
+  border:1px solid rgba(255,255,255,.24);
+  border-radius:7px;
+  background:rgba(255,255,255,.2);
+  color:#fff;
+  -webkit-backdrop-filter:blur(8px);
+  backdrop-filter:blur(8px);
+  cursor:pointer;
+  transition:background-color .18s ease, transform .18s ease;
+}
+
+.planner-meal-action:hover{
+  transform:translateY(-1px);
+  background:rgba(255,255,255,.38);
+}
+
+.planner-meal-action:focus-visible{
+  outline:2px solid #fff;
+  outline-offset:2px;
+}
+
+.planner-meal-action svg{
+  width:14px;
+  height:14px;
+}
+
+.planner-day-content{
+  width:100%;
+}
+
+.planner-day-meal{
+  height:170px;
+}
+
+.planner-day-meal > img{
+  max-height:none;
+}
+
 #favoriteContainer::-webkit-scrollbar,
 #queueContainer::-webkit-scrollbar,
 .week-grid::-webkit-scrollbar{
   display:none;
+}
+
+@media (max-width:600px){
+  #favoriteContainer{
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .favorite-meal-card,
+  .favorite-meal-action{
+    transition:none;
+  }
+
+  .favorite-meal-card:hover,
+  .favorite-meal-card:focus-within,
+  .favorite-meal-action:hover{
+    transform:none;
+  }
 }
 
 .favorite-card-slot,

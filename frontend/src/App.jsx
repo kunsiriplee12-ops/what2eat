@@ -201,6 +201,13 @@ export default function App() {
     setQueuedMeals(queue.toArray());
   };
 
+  const removePlannedMeal = (day, index) => {
+    setWeeklyPlan((current) => ({
+      ...current,
+      [day]: current[day].filter((_, mealIndex) => mealIndex !== index),
+    }));
+  };
+
   const clearPlanner = () => setWeeklyPlan(initialWeeklyPlan());
 
   const sortMeals = () => {
@@ -246,6 +253,7 @@ export default function App() {
               <FavoritesPage
                 meals={favorites}
                 onRemove={(id) => setFavorites((current) => current.filter((meal) => meal.id !== id))}
+                onViewDetail={openMealDetail}
               />
             )}
             {activePage === "/planner" && (
@@ -253,8 +261,10 @@ export default function App() {
                 meals={queuedMeals}
                 weeklyPlan={weeklyPlan}
                 onRemove={(index) => setQueuedMeals((current) => current.filter((_, itemIndex) => itemIndex !== index))}
+                onRemovePlanned={removePlannedMeal}
                 onGenerate={generateWeeklyPlan}
                 onClear={clearPlanner}
+                onViewDetail={openMealDetail}
               />
             )}
           </main>
@@ -275,7 +285,7 @@ export default function App() {
           >
             <i data-lucide="arrow-up" aria-hidden="true"></i>
           </button>
-          {activePage === "/catalog" && (
+          {(activePage === "/catalog" || activePage === "/favorites" || activePage === "/planner") && (
             <MealModal mealId={mealModalId} onClose={closeMealDetail} />
           )}
         </>
