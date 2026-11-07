@@ -7,6 +7,14 @@ const pageLabels = {
   "/planner": "Weekly Meal Planner",
 };
 
+const categoryBackgrounds = {
+  Beef: "/images/beef-bg.jpg",
+  Pasta: "/images/pasta-bg.jpg",
+  Chicken: "/images/chicken-bg.jpg",
+  Seafood: "/images/seafood-bg.jpg",
+  Dessert: "/images/dessert-bg.jpg",
+};
+
 export default function Navbar({
   isLanding,
   activePage,
@@ -74,7 +82,7 @@ export default function Navbar({
 
   if (isLanding) {
     return (
-      <div className="landing-page">
+      <div className={`landing-page${isNavigationOpen ? " is-navigation-open" : ""}`}>
         <header className="hero-header hero-landing">
           <video className="hero-background" autoPlay loop muted playsInline aria-hidden="true" tabIndex="-1">
             <source src="/videos/hero-bg.mp4" type="video/mp4" />
@@ -113,21 +121,12 @@ export default function Navbar({
               aria-modal="true"
               aria-labelledby="navigationModalTitle"
             >
-              <button
-                className="close-btn"
-                type="button"
-                aria-label="Close navigation"
-                title="Close"
-                onClick={() => setIsNavigationOpen(false)}
-              >
-                X
-              </button>
               <h2 id="navigationModalTitle">Where to?</h2>
               <nav className="hero-navigation-options" aria-label="Choose a page">
                 {navigationGraph.getNodes().map((route) => (
                   <button
                     key={route}
-                    className="sort-btn hero-navigation-option"
+                    className="hero-navigation-option"
                     type="button"
                     onClick={() => handleNavigate(route)}
                   >
@@ -143,7 +142,24 @@ export default function Navbar({
   }
 
   return (
-    <>
+    <div
+      className={activePage === "/catalog" ? "catalog-hero" : "subpage-top"}
+      style={
+        activePage === "/catalog"
+          ? {
+              "--catalog-hero-image":
+                `url("${categoryBackgrounds[selectedCategory] || categoryBackgrounds.Beef}")`,
+            }
+          : undefined
+      }
+    >
+      {activePage === "/catalog" && (
+        <div
+          key={selectedCategory || "Beef"}
+          className="catalog-hero-background"
+          aria-hidden="true"
+        />
+      )}
       <header className="subpage-navigation">
         <button className="subpage-home-button" type="button" onClick={onHome}>
           WHAT2EAT
@@ -181,6 +197,6 @@ export default function Navbar({
           </div>
         </section>
       )}
-    </>
+    </div>
   );
 }
