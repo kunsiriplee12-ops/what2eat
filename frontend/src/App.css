@@ -214,6 +214,10 @@ body{
   margin-bottom:12px;
 }
 
+.favorites-section > h2{
+  visibility:hidden;
+}
+
 .dashboard-section:not(.meal-catalog){
   padding:20px;
   border:1px solid rgba(0, 0, 0, 0.08);
@@ -1685,6 +1689,89 @@ body{
   background:#fff;
   color:#111;
   box-shadow:0 8px 24px rgba(0,0,0,.24);
+}
+
+.app-page:has(.favorites-section),
+.app-page:has(.planner-section){
+  position:relative;
+  isolation:isolate;
+  min-height:100vh;
+  background-position:center;
+  background-repeat:no-repeat;
+  background-size:cover;
+}
+
+.app-page:has(.favorites-section){
+  background-image:url("/images/Favorites_bg.jpg");
+}
+
+.app-page:has(.planner-section){
+  background-image:url("/images/PlannerPage_bg.jpg");
+  background-color:#000;
+  background-attachment:fixed;
+}
+
+.app-page:has(.favorites-section)::before,
+.app-page:has(.planner-section)::before{
+  position:absolute;
+  z-index:0;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  content:"";
+  pointer-events:none;
+}
+
+.app-page:has(.planner-section)::before{
+  position:fixed;
+}
+
+.app-page:has(.favorites-section) > .subpage-top,
+.app-page:has(.planner-section) > .subpage-top{
+  position:relative;
+  z-index:2;
+  background:transparent;
+}
+
+.app-page:has(.favorites-section) > .subpage-top .subpage-navigation,
+.app-page:has(.planner-section) > .subpage-top .subpage-navigation{
+  position:relative;
+  border-bottom:0;
+  background:transparent;
+}
+
+.app-page:has(.favorites-section) > .subpage-top .subpage-home-button,
+.app-page:has(.favorites-section) > .subpage-top .subpage-route-links .hero-navigation-option,
+.app-page:has(.planner-section) > .subpage-top .subpage-home-button,
+.app-page:has(.planner-section) > .subpage-top .subpage-route-links .hero-navigation-option{
+  border:1px solid rgba(255,255,255,.36);
+  background:rgba(255,255,255,.14);
+  color:#fff;
+  box-shadow:0 8px 24px rgba(0,0,0,.14);
+  -webkit-backdrop-filter:blur(12px);
+  backdrop-filter:blur(12px);
+}
+
+.app-page:has(.favorites-section) > .subpage-top .subpage-home-button:hover,
+.app-page:has(.favorites-section) > .subpage-top .subpage-route-links .hero-navigation-option:hover,
+.app-page:has(.favorites-section) > .subpage-top .subpage-route-links .hero-navigation-option.is-active,
+.app-page:has(.planner-section) > .subpage-top .subpage-home-button:hover,
+.app-page:has(.planner-section) > .subpage-top .subpage-route-links .hero-navigation-option:hover,
+.app-page:has(.planner-section) > .subpage-top .subpage-route-links .hero-navigation-option.is-active{
+  border-color:rgba(255,255,255,.72);
+  background:rgba(255,255,255,.92);
+  color:#111;
+}
+
+.app-page:has(.favorites-section) > .dashboard-layout,
+.app-page:has(.planner-section) > .dashboard-layout{
+  position:relative;
+  z-index:1;
+  background:transparent;
+}
+
+.app-page:has(.favorites-section) :is(h2,h3,h4,label),
+.app-page:has(.planner-section) :is(h2,h3,h4,label){
+  color:#fff;
 }
 
 @keyframes catalog-hero-background-in{

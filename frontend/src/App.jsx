@@ -224,7 +224,7 @@ export default function App() {
   const closeMealDetail = useCallback(() => setMealModalId(null), []);
 
   return (
-    <>
+    <div className="app-page">
       <Navbar
         isLanding={activePage === "/"}
         activePage={activePage}
@@ -301,6 +301,6 @@ export default function App() {
           )}
         </>
       )}
-    </>
+    </div>
   );
 }
