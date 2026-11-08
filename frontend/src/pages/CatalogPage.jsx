@@ -49,7 +49,10 @@ export default function CatalogPage({
             key={meal.idMeal}
             meal={meal}
             isFavorite={favorites.some((item) => item.id === String(meal.idMeal))}
-            isQueued={queuedMeals.some((item) => item.id === String(meal.idMeal)) || plannedIds.has(String(meal.idMeal))}
+            isQueued={
+              queuedMeals.some((item) => item.id === String(meal.idMeal)) ||
+              plannedIds.has(String(meal.idMeal))
+            }
             onViewDetail={onViewDetail}
             onToggleFavorite={onToggleFavorite}
             onToggleQueue={onToggleQueue}

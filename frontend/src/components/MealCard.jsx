@@ -41,7 +41,7 @@ export default function MealCard({
             data-action="queue"
             data-meal-id={meal.idMeal}
             aria-pressed={isQueued}
-            onClick={() => onToggleQueue(meal)}
+            onClick={() => !isQueued && onToggleQueue(meal)}
           >
             <i data-lucide="calendar-plus" aria-hidden="true"></i>
           </button>

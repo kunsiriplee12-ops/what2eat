@@ -252,8 +252,12 @@ export default function App() {
             {activePage === "/favorites" && (
               <FavoritesPage
                 meals={favorites}
+                queuedMeals={queuedMeals}
+                plannedIds={plannedIds}
                 onRemove={(id) => setFavorites((current) => current.filter((meal) => meal.id !== id))}
                 onViewDetail={openMealDetail}
+                onToggleQueue={toggleQueue}
+                onNavigate={navigateTo}
               />
             )}
             {activePage === "/planner" && (
