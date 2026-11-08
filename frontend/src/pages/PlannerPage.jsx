@@ -6,13 +6,40 @@ const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
 export default function PlannerPage({
   meals,
   weeklyPlan,
+  onPlanMeal,
   onRemove,
   onRemovePlanned,
   onGenerate,
   onClear,
   onViewDetail,
+  onNavigate,
 }) {
   const queue = new Queue(meals);
+  const queuedMeals = queue.toArray();
+
+  const handleDrop = (event) => {
+    event.preventDefault();
+    const day = event.currentTarget.dataset.dayKey;
+    const serializedMeal = event.dataTransfer.getData("application/json");
+    if (!days.includes(day) || !serializedMeal) return;
+
+    let meal;
+    try {
+      meal = JSON.parse(serializedMeal);
+    } catch {
+      return;
+    }
+
+    if (
+      !meal ||
+      typeof meal.id !== "string" ||
+      typeof meal.name !== "string" ||
+      typeof meal.image !== "string"
+    ) {
+      return;
+    }
+    onPlanMeal(day, meal);
+  };
 
   useEffect(() => {
     if (window.lucide) window.lucide.createIcons();
@@ -23,8 +50,17 @@ export default function PlannerPage({
       <section className="dashboard-section queue-section" aria-labelledby="queueHeading">
         <h2 id="queueHeading">Weekly Meals</h2>
         <div id="queueContainer">
-          {queue.toArray().map((meal, index) => (
-            <article className="planner-meal-card" key={`${meal.id}-${index}`}>
+          {queuedMeals.map((meal, index) => (
+            <article
+              className="planner-meal-card"
+              key={`${meal.id}-${index}`}
+              draggable="true"
+              onDragStart={(event) => {
+                event.dataTransfer.setData("application/json", JSON.stringify(meal));
+                event.dataTransfer.setData("text/plain", JSON.stringify(meal));
+                event.dataTransfer.effectAllowed = "move";
+              }}
+            >
               <img src={meal.image} alt={meal.name} />
               <div className="planner-meal-card-content">
                 <h3>{meal.name}</h3>
@@ -50,6 +86,17 @@ export default function PlannerPage({
                 </div>
               </div>
             </article>
+          ))}
+          {Array.from({ length: Math.max(0, 3 - queuedMeals.length) }, (_, index) => (
+            <button
+              className="planner-meal-card planner-empty-card"
+              key={`empty-slot-${index}`}
+              type="button"
+              aria-label="ไปยัง Meal Catalog"
+              onClick={() => onNavigate("/catalog")}
+            >
+              <i data-lucide="plus" aria-hidden="true"></i>
+            </button>
           ))}
         </div>
         <div className="queue-actions">
@@ -78,14 +125,23 @@ export default function PlannerPage({
         <h2 id="plannerHeading">Weekly Meal Planner</h2>
         <div className="week-grid">
           {days.map((day) => {
-            const dayMeals = weeklyPlan[day];
+            const meal = weeklyPlan[day];
             return (
-              <div className="day-card" key={day}>
-                <div className={`mini-card planner-card${dayMeals.length ? " is-filled" : ""}`}>
-                  <h3>{day}</h3>
+              <div
+                className="day-card"
+                key={day}
+                data-day-key={day}
+                onDragOver={(event) => {
+                  event.preventDefault();
+                  event.dataTransfer.dropEffect = "move";
+                }}
+                onDrop={handleDrop}
+              >
+                <div className={`mini-card planner-card${meal ? " is-filled" : ""}`}>
+                  <h3 className="planner-day-title">{day}</h3>
                   <div id={day} className="planner-day-content">
-                    {dayMeals.map((meal, index) => (
-                      <article className="planner-meal-card planner-day-meal" key={`${meal.id}-${index}`}>
+                    {meal && (
+                      <article className="planner-meal-card planner-day-meal" key={meal.id}>
                         <img src={meal.image} alt={meal.name} />
                         <div className="planner-meal-card-content">
                           <h4>{meal.name}</h4>
@@ -104,14 +160,14 @@ export default function PlannerPage({
                               type="button"
                               aria-label={`ลบ ${meal.name} จาก ${day}`}
                               title={`นำออกจาก ${day}`}
-                              onClick={() => onRemovePlanned(day, index)}
+                              onClick={() => onRemovePlanned(day)}
                             >
                               <i data-lucide="trash-2" aria-hidden="true"></i>
                             </button>
                           </div>
                         </div>
                       </article>
-                    ))}
+                    )}
                   </div>
                 </div>
               </div>

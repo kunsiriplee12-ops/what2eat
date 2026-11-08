@@ -16,7 +16,7 @@ const categoryThai = {
   Pasta: "พาสต้า",
 };
 const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-const initialWeeklyPlan = () => Object.fromEntries(weekDays.map((day) => [day, []]));
+const initialWeeklyPlan = () => Object.fromEntries(weekDays.map((day) => [day, null]));
 const getRoute = () => window.location.pathname;
 
 function normalizeRoute(pathname) {
@@ -141,7 +141,7 @@ export default function App() {
 
   const favoriteIds = useMemo(() => new Set(favorites.map((meal) => meal.id)), [favorites]);
   const plannedIds = useMemo(
-    () => new Set(Object.values(weeklyPlan).flat().map((meal) => meal.id)),
+    () => new Set(Object.values(weeklyPlan).filter(Boolean).map((meal) => meal.id)),
     [weeklyPlan],
   );
 
@@ -193,18 +193,23 @@ export default function App() {
     const nextPlan = { ...weeklyPlan };
     for (const day of weekDays) {
       if (queue.isEmpty()) break;
-      if (nextPlan[day].length === 0) {
-        nextPlan[day] = [...nextPlan[day], queue.dequeue()];
+      if (nextPlan[day] === null) {
+        nextPlan[day] = queue.dequeue();
       }
     }
     setWeeklyPlan(nextPlan);
     setQueuedMeals(queue.toArray());
   };
 
-  const removePlannedMeal = (day, index) => {
+  const planDroppedMeal = (day, meal) => {
+    setWeeklyPlan((current) => ({ ...current, [day]: meal }));
+    setQueuedMeals((current) => current.filter((queuedMeal) => queuedMeal.id !== meal.id));
+  };
+
+  const removePlannedMeal = (day) => {
     setWeeklyPlan((current) => ({
       ...current,
-      [day]: current[day].filter((_, mealIndex) => mealIndex !== index),
+      [day]: null,
     }));
   };
 
@@ -264,11 +269,13 @@ export default function App() {
               <PlannerPage
                 meals={queuedMeals}
                 weeklyPlan={weeklyPlan}
+                onPlanMeal={planDroppedMeal}
                 onRemove={(index) => setQueuedMeals((current) => current.filter((_, itemIndex) => itemIndex !== index))}
                 onRemovePlanned={removePlannedMeal}
                 onGenerate={generateWeeklyPlan}
                 onClear={clearPlanner}
                 onViewDetail={openMealDetail}
+                onNavigate={navigateTo}
               />
             )}
           </main>

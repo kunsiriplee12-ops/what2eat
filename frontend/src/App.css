@@ -644,13 +644,29 @@ body{
 .favorite-empty-card{
   display:grid;
   place-items:center;
-  border:1px solid rgba(0,0,0,.08);
-  background:rgba(255,255,255,.65);
-  box-shadow:0 8px 32px 0 rgba(0,0,0,.05);
-  color:rgba(0,0,0,.7);
+  border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.12);
+  box-shadow:0 8px 32px 0 rgba(0,0,0,.08);
+  color:#fff;
   -webkit-backdrop-filter:blur(12px);
   backdrop-filter:blur(12px);
   cursor:pointer;
+}
+
+.favorites-coverflow-stage > .favorite-meal-card.favorite-empty-card{
+  cursor:pointer;
+}
+
+.favorite-meal-card.favorite-empty-card:hover,
+.favorite-empty-card:focus-visible{
+  border-color:rgba(255,255,255,.5);
+  background:rgba(255,255,255,.2);
+  box-shadow:0 10px 32px rgba(255,255,255,.16);
+}
+
+.favorite-empty-card:focus-visible{
+  outline:2px solid rgba(255,255,255,.85);
+  outline-offset:3px;
 }
 
 .favorite-empty-card > svg{
@@ -759,7 +775,8 @@ body{
   position:relative;
   width:100%;
   min-width:0;
-  height:180px;
+  height:auto;
+  aspect-ratio:1;
   overflow:hidden;
   border-radius:16px;
   background:transparent;
@@ -771,6 +788,41 @@ body{
 .planner-meal-card:focus-within{
   transform:translateY(-4px);
   box-shadow:0 10px 22px rgba(0,0,0,.18);
+}
+
+.planner-empty-card{
+  display:grid;
+  place-items:center;
+  padding:0;
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:16px;
+  background:rgba(255,255,255,.12);
+  box-shadow:0 8px 32px 0 rgba(0,0,0,.08);
+  -webkit-backdrop-filter:blur(12px);
+  backdrop-filter:blur(12px);
+  color:#fff;
+  cursor:pointer;
+  transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease, background-color .2s ease;
+}
+
+.planner-empty-card:hover,
+.planner-empty-card:focus-visible{
+  transform:translateY(-4px);
+  border-color:rgba(255,255,255,.5);
+  background:rgba(255,255,255,.2);
+  box-shadow:0 10px 32px rgba(255,255,255,.16);
+}
+
+.planner-empty-card:focus-visible{
+  outline:2px solid rgba(255,255,255,.85);
+  outline-offset:3px;
+}
+
+.planner-empty-card > svg{
+  width:36px;
+  height:36px;
+  color:#fff;
+  stroke-width:1.75;
 }
 
 .planner-meal-card > img{
@@ -901,13 +953,13 @@ body{
 
 .week-grid > .day-card{
   flex:0 0 auto;
-  width:150px;
-  min-height:170px;
+  width:180px;
+  aspect-ratio:1;
 }
 
 .day-card{
   display:flex;
-  justify-content:center;
+  justify-content:stretch;
   min-width:0;
   border:0;
   background:transparent;
@@ -916,24 +968,68 @@ body{
 }
 
 .planner-card{
+  position:relative;
   display:flex;
   flex-direction:column;
   justify-content:flex-start;
 }
 
-.planner-card:not(.is-filled){
-  justify-content:center;
+.week-grid .day-card .planner-card{
+  width:100%;
+  height:100%;
+  min-height:0;
+  aspect-ratio:1;
+  padding:0;
+  border:0;
+  border-radius:16px;
+  background:#202522;
+  box-shadow:0 2px 8px rgba(0,0,0,.12);
 }
 
-.planner-card h3{
-  margin:0 0 8px;
+.week-grid .day-card .planner-card:not(.is-filled){
+  border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.15);
+  box-shadow:0 8px 32px rgba(0,0,0,.1);
+  -webkit-backdrop-filter:blur(12px);
+  backdrop-filter:blur(12px);
+}
+
+.week-grid .planner-day-content,
+.week-grid .planner-day-meal{
+  width:100%;
+  height:100%;
+}
+
+.week-grid .planner-day-meal{
+  aspect-ratio:1;
+}
+
+.planner-day-title{
+  position:absolute;
+  z-index:2;
+  top:0;
+  right:0;
+  left:0;
+  display:grid;
+  place-items:center;
+  min-height:30px;
+  margin:0;
+  padding:4px 8px;
+  background:linear-gradient(to bottom, rgba(0,0,0,.62), transparent);
+  color:#fff;
   font-size:12px;
   font-weight:600;
   text-align:center;
 }
 
-.planner-card:not(.is-filled) h3{
-  margin:0;
+.planner-card:not(.is-filled) .planner-day-title{
+  top:0;
+  right:0;
+  bottom:0;
+  left:0;
+  min-height:0;
+  color:#fff;
+  background:transparent;
 }
 
 /* ==========================
