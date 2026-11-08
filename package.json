@@ -1,5 +1,12 @@
+
 {
+  "name": "what2eat-root",
+  "version": "1.0.0",
+  "private": true,
   "dependencies": {
     "express": "^5.2.1"
+  },
+  "scripts": {
+    "build": "npm install --prefix frontend && npm run build --prefix frontend"
   }
 }
