@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function FavoritesPage({
   meals,
@@ -10,6 +10,14 @@ export default function FavoritesPage({
   onNavigate,
 }) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const pointerStart = useRef(null);
+  const dragged = useRef(false);
+  const wheelDistance = useRef(0);
+  const wheelFrame = useRef(null);
+  const wheelCooldownUntil = useRef(0);
+  const dragFrame = useRef(null);
+  const stageRef = useRef(null);
 
   useEffect(() => {
     if (window.lucide) window.lucide.createIcons();
@@ -18,6 +26,14 @@ export default function FavoritesPage({
   useEffect(() => {
     setActiveIndex((current) => Math.min(current, Math.max(meals.length - 1, 0)));
   }, [meals.length]);
+
+  useEffect(
+    () => () => {
+      window.cancelAnimationFrame(wheelFrame.current);
+      window.cancelAnimationFrame(dragFrame.current);
+    },
+    [],
+  );
 
   const visibleMeals = meals.length >= 3
     ? [-1, 0, 1].map((offset) => {
@@ -34,21 +50,101 @@ export default function FavoritesPage({
     setActiveIndex((current) => (current + direction + meals.length) % meals.length);
   };
 
+  const handlePointerDown = (event) => {
+    if (event.target.closest("button")) return;
+    pointerStart.current = { id: event.pointerId, x: event.clientX, distance: 0 };
+    dragged.current = false;
+    if (stageRef.current) stageRef.current.style.transition = "none";
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handlePointerMove = (event) => {
+    if (pointerStart.current?.id !== event.pointerId) return;
+    const distance = event.clientX - pointerStart.current.x;
+    pointerStart.current.distance = distance;
+    if (Math.abs(distance) > 8) {
+      if (!dragged.current) {
+        dragged.current = true;
+        setIsDragging(true);
+      }
+      event.preventDefault();
+      if (dragFrame.current === null) {
+        dragFrame.current = window.requestAnimationFrame(() => {
+          if (stageRef.current && pointerStart.current) {
+            stageRef.current.style.transform = `translate3d(${pointerStart.current.distance * 0.65}px, 0, 0)`;
+          }
+          dragFrame.current = null;
+        });
+      }
+    }
+  };
+
+  const handlePointerEnd = (event) => {
+    if (pointerStart.current?.id !== event.pointerId) return;
+    const distance = pointerStart.current.distance;
+    window.cancelAnimationFrame(dragFrame.current);
+    dragFrame.current = null;
+    if (stageRef.current) {
+      stageRef.current.style.removeProperty("transform");
+      stageRef.current.style.removeProperty("transition");
+    }
+    if (Math.abs(distance) > 64 && meals.length > 1) {
+      moveActive(distance < 0 ? 1 : -1);
+    }
+    pointerStart.current = null;
+    setIsDragging(false);
+  };
+
+  const scheduleWheelFrame = () => {
+    if (wheelFrame.current !== null) return;
+    wheelFrame.current = window.requestAnimationFrame(() => {
+      if (Date.now() < wheelCooldownUntil.current) {
+        wheelDistance.current = 0;
+      } else if (Math.abs(wheelDistance.current) >= 90) {
+        const direction = wheelDistance.current > 0 ? 1 : -1;
+        wheelDistance.current = 0;
+        moveActive(direction);
+        wheelCooldownUntil.current = Date.now() + 450;
+      }
+      wheelFrame.current = null;
+    });
+  };
+
+  const handleWheel = (event) => {
+    if (meals.length < 2 || event.target.closest("button")) return;
+
+    const horizontalDelta =
+      Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+    if (horizontalDelta === 0) return;
+
+    event.preventDefault();
+    if (Date.now() < wheelCooldownUntil.current) return;
+    if (wheelDistance.current !== 0 && Math.sign(wheelDistance.current) !== Math.sign(horizontalDelta)) {
+      wheelDistance.current = 0;
+    }
+    wheelDistance.current += horizontalDelta;
+    scheduleWheelFrame();
+  };
+
   return (
     <section className="dashboard-section favorites-section" aria-labelledby="favoritesHeading">
       <h2 id="favoritesHeading">Favorites</h2>
-      <div className={`favorites-coverflow${meals.length ? "" : " is-empty"}`}>
-        {meals.length > 1 && (
-          <button
-            className="favorites-coverflow-control is-previous"
-            type="button"
-            aria-label="รายการโปรดก่อนหน้า"
-            onClick={() => moveActive(-1)}
-          >
-            <i data-lucide="chevron-left" aria-hidden="true"></i>
-          </button>
-        )}
-        <div className="favorites-coverflow-stage">
+      <div className={`favorites-coverflow${meals.length ? "" : " is-empty"}${isDragging ? " is-dragging" : ""}`}>
+        <div
+          className="favorites-coverflow-stage"
+          ref={stageRef}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerEnd}
+          onPointerCancel={handlePointerEnd}
+          onWheel={handleWheel}
+          onClickCapture={(event) => {
+            if (!dragged.current) return;
+            event.stopPropagation();
+            event.preventDefault();
+            dragged.current = false;
+          }}
+        >
           {meals.length === 0
             ? [-1, 0, 1].map((offset) => (
                 <button
@@ -125,16 +221,6 @@ export default function FavoritesPage({
                 );
               })}
         </div>
-        {meals.length > 1 && (
-          <button
-            className="favorites-coverflow-control is-next"
-            type="button"
-            aria-label="รายการโปรดถัดไป"
-            onClick={() => moveActive(1)}
-          >
-            <i data-lucide="chevron-right" aria-hidden="true"></i>
-          </button>
-        )}
       </div>
     </section>
   );
