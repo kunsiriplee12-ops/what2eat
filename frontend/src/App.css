@@ -255,26 +255,25 @@ body{
   width:42px;
   height:42px;
   padding:0;
-  border:1px solid #d8dfdc;
-  border-radius:7px;
-  background:#fff;
-  color:#397360;
+  border:1px solid rgba(255,255,255,.36);
+  border-radius:999px;
+  background:rgba(255,255,255,.14);
+  color:#fff;
+  box-shadow:0 8px 24px rgba(0,0,0,.14);
+  -webkit-backdrop-filter:blur(12px);
+  backdrop-filter:blur(12px);
   cursor:pointer;
-  transition:background-color .15s ease, color .15s ease, border-color .15s ease;
+  transition:background-color .2s ease, border-color .2s ease, transform .2s ease;
 }
 
 .queue-action:hover{
-  border-color:#397360;
-  background:#edf5f1;
+  transform:translateY(-1px);
+  border-color:rgba(255,255,255,.6);
+  background:rgba(255,255,255,.26);
 }
 
 .queue-action-clear{
-  color:#a4473d;
-}
-
-.queue-action-clear:hover{
-  border-color:#a4473d;
-  background:#fbefed;
+  color:#fff;
 }
 
 .queue-action svg{
@@ -1767,6 +1766,18 @@ body{
   position:relative;
   z-index:1;
   background:transparent;
+}
+
+.app-page:has(.favorites-section){
+  display:flex;
+  flex-direction:column;
+}
+
+.app-page:has(.favorites-section) > .dashboard-layout{
+  display:flex;
+  flex:1;
+  flex-direction:column;
+  justify-content:center;
 }
 
 .app-page:has(.favorites-section) :is(h2,h3,h4,label),
